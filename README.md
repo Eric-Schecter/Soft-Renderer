@@ -4,6 +4,8 @@ A soft renderer written in c++.
 ## Renderer Samples
 #### Triangle
 ![triangle](./profiles/triangle.png)  
+#### Triangle
+![triangle](./profiles/simple-model.png)  
 
 ## Reference
 https://github.com/ssloy/tinyrenderer

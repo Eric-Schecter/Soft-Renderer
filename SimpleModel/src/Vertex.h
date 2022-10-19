@@ -1,11 +1,13 @@
 #pragma once
 
-class Vertex
-{
-public:
-	Vertex(int _x = 0, int _y = 0) :x(_x), y(_y) {};
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
-	int x;
-	int y;
+struct Vertex {
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 uv;
+	glm::vec3 tangent;
+	glm::vec3 biTangent;
 };
 

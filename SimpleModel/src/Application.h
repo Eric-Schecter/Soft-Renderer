@@ -3,6 +3,8 @@
 #include "Renderer.h"
 #include "Window.h"
 
+#include <vector>
+
 class Application
 {
 public:
@@ -18,5 +20,8 @@ private:
 
 	Window* window;
 	Renderer* renderer;
+
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
 };
 
