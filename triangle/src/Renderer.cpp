@@ -121,15 +121,11 @@ void Renderer::render(Vertex& v1, Vertex& v2, Vertex& v3,const glm::vec4& color)
 	}
 
 	// version one:
-	// draw two triangles
+	// draw two triangles	
 	// get left and right points in the same y;
 	//drawTriangleOne(v1, v2, v3, color);
 
 	// version two:
 	// barycenter
 	drawTriangleTwo(v1, v2, v3, color);
-}
-
-void Renderer::renderByPixel() {
-
 }
