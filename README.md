@@ -5,6 +5,9 @@ A soft renderer written in c++.
 #### Triangle
 ![triangle](./profiles/triangle.png)  
 
+## Reference
+https://github.com/ssloy/tinyrenderer
+
 ## License
 This project is licensed under [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
