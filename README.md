@@ -4,7 +4,7 @@ A soft renderer written in c++.
 ## Renderer Samples
 #### Triangle
 ![triangle](./profiles/triangle.png)  
-#### Triangle
+#### Model
 ![triangle](./profiles/simple-model.png)  
 
 ## Reference
