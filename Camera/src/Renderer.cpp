@@ -12,7 +12,7 @@ void Renderer::setFramebuffer(uint32_t* pixels,	int width,int height) {
 	m_framebuffer = pixels;
 	m_zbuffer = new float[width * height];
 	for (auto i = 0; i < width * height; ++i) {
-		m_zbuffer[i] = 1.f; // z is clamped between -1 and 1, -1 is far from the viewer
+		m_zbuffer[i] = 1.f; // z is clamped between -1 and 1, 1 is far from the viewer, ndc coordinate is left-handed
 ;	}
 	m_width = width;
 	m_height = height;
