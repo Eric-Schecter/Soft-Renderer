@@ -4,6 +4,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 #include <algorithm>
 #include <limits>
 
@@ -11,7 +12,7 @@ void Renderer::setFramebuffer(uint32_t* pixels,	int width,int height) {
 	m_framebuffer = pixels;
 	m_zbuffer = new float[width * height];
 	for (auto i = 0; i < width * height; ++i) {
-		m_zbuffer[i] = -std::numeric_limits<float>::max();
+		m_zbuffer[i] = 1.f; // z is clamped between -1 and 1, -1 is far from the viewer
 ;	}
 	m_width = width;
 	m_height = height;
@@ -66,21 +67,18 @@ void Renderer::drawTriangle( glm::vec3& v1,  glm::vec3& v2,  glm::vec3& v3, cons
 		boundingBoxMax.y = std::min(m_height - 1.f, std::max(v[i].y, boundingBoxMax.y));
 	}
 
-	glm::vec3 v4;
 	// should convert to int for pixel when loop
 	for (int x = static_cast<int>(boundingBoxMin.x); x <= static_cast<int>(boundingBoxMax.x); ++x) {
 		for (int y = static_cast<int>(boundingBoxMin.y); y <= static_cast<int>(boundingBoxMax.y); ++y) {
-			v4.x = x;
-			v4.y = y;
+			glm::vec3 v4(x, y, 0.f);
 			glm::vec3 pos = barycentric(v1, v2, v3, v4);
 			if (pos.x < 0.f || pos.y < 0.f || pos.z < 0.f) {
 				continue;
 			}
-			v4.z = 0.f;
 			for (auto i = 0; i < 3; ++i) {
 				v4.z += v[i].z *pos[i];
 			}
-			if (m_zbuffer[static_cast<int>(x + y * m_width)] < v4.z) {
+			if (m_zbuffer[static_cast<int>(x + y * m_width)] > v4.z) {
 				m_zbuffer[static_cast<int>(x + y * m_width)] = v4.z;
 				setPixel(x, y, color);
 			}
@@ -88,17 +86,24 @@ void Renderer::drawTriangle( glm::vec3& v1,  glm::vec3& v2,  glm::vec3& v3, cons
 	}
 }
 
-void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint32_t>& indices,const glm::vec4& color) {
-	const glm::vec3 offset(1.f,-1.f, 1.f);
-	const glm::vec3 scale(m_width / 2, -m_height / 2, 1.f);
-
-	const glm::vec3 light = glm::normalize(glm::vec3(0,0,1));
+void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint32_t>& indices,const glm::vec4& color,const Camera* camera, const glm::mat4& modelMatrix) {
+	glm::vec3 light = glm::normalize(glm::vec3(0,0,1.f));
 
 	for (auto i = 0; i < indices.size(); i+=3) {
-		// model2world
-		glm::vec3 p1 = (vertices[indices[i]].position + offset) * scale;
-		glm::vec3 p2 = (vertices[indices[static_cast<size_t>(i) + 1]].position + offset) * scale;
-		glm::vec3 p3 = (vertices[indices[static_cast<size_t>(i) + 2]].position + offset) * scale;
+		// clip space, vertex shader output
+		glm::vec4 p1cs = camera->projection * camera->view * modelMatrix * glm::vec4(vertices[indices[i]].position,1.f);
+		glm::vec4 p2cs = camera->projection * camera->view * modelMatrix * glm::vec4(vertices[indices[static_cast<size_t>(i) + 1]].position, 1.f);
+		glm::vec4 p3cs = camera->projection * camera->view * modelMatrix * glm::vec4(vertices[indices[static_cast<size_t>(i) + 2]].position, 1.f);
+
+		// perspective division -> NDC coordinate
+		glm::vec4 p1ss = p1cs / p1cs.w;
+		glm::vec4 p2ss = p2cs / p2cs.w;
+		glm::vec4 p3ss = p3cs / p3cs.w;
+
+		// screen space, fragment shader input
+		glm::vec3 p1 = camera->viewport * p1ss;
+		glm::vec3 p2 = camera->viewport * p2ss;
+		glm::vec3 p3 = camera->viewport * p3ss;
 
 		// flat shading
 		glm::vec3 ab = glm::normalize(vertices[indices[static_cast<size_t>(i) + 1]].position- vertices[indices[i]].position);
