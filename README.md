@@ -6,6 +6,8 @@ A soft renderer written in c++.
 ![triangle](./profiles/triangle.png)  
 #### Model
 ![triangle](./profiles/simple-model.png)  
+#### Camera
+![triangle](./profiles/camera.png)  
 
 ## Reference
 https://github.com/ssloy/tinyrenderer
