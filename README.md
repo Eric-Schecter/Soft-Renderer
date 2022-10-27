@@ -8,6 +8,8 @@ A soft renderer written in c++.
 ![triangle](./profiles/simple-model.png)  
 #### Camera
 ![triangle](./profiles/camera.png)  
+#### Gourad Shading
+![triangle](./profiles/gourad-shading.png)  
 
 ## Reference
 https://github.com/ssloy/tinyrenderer
