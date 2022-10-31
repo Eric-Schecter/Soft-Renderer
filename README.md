@@ -3,13 +3,15 @@ A soft renderer written in c++.
 
 ## Renderer Samples
 #### Triangle
-![triangle](./profiles/triangle.png)  
+![Triangle](./profiles/triangle.png)  
 #### Model
-![triangle](./profiles/simple-model.png)  
+![Model](./profiles/simple-model.png)  
 #### Camera
-![triangle](./profiles/camera.png)  
+![Camera](./profiles/camera.png)  
 #### Gourad Shading
-![triangle](./profiles/gourad-shading.png)  
+![Gourad Shading](./profiles/gourad-shading.png)  
+#### Texture
+![Texture](./profiles/texture.png)  
 
 ## Reference
 https://github.com/ssloy/tinyrenderer
