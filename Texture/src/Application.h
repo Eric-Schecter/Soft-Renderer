@@ -23,7 +23,8 @@ private:
 	Window* window;
 	Renderer* renderer;
 	Camera* camera;
-	Image* image;
+	Image* diffuse;
+	Image* normal;
 
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;

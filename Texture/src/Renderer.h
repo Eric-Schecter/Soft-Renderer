@@ -20,7 +20,9 @@ public:
 		const std::vector<uint32_t>& indices, 
 		const Camera* camera,
 		const glm::mat4& modelMatrix,
-		Image* diffuse);
+		Image* diffuse,
+		Image* normal
+		);
 
 private:
 	void setPixel(int x, int y, const glm::vec4& color);

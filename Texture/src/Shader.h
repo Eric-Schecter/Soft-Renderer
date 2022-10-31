@@ -9,7 +9,6 @@ class Shader {
 public:
 	glm::vec4 vertex( // default output position for interplation
 		const glm::vec3& position,
-		const glm::vec3& normal,
 		const glm::vec2& uv,
 		int index
 	);
@@ -20,8 +19,8 @@ public:
 	glm::mat4 u_model;
 	glm::vec3 u_light;
 	Image* u_diffuse;
+	Image* u_normal;
 
 	glm::vec4 gl_position;
-	glm::vec3 v_normal[3];
 	glm::vec2 v_uv[3];
 };

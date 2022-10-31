@@ -22,4 +22,4 @@ This project is licensed under [![License: MIT](https://img.shields.io/badge/Lic
 ## Contact
 * Email:[eric199002@icloud.com](eric199002@icloud.com)
 * Twitter:[https://twitter.com/nikoniko600](https://twitter.com/nikoniko600)
-* Repo:[https://github.com/Eric-Schecter/img2ppt](https://github.com/Eric-Schecter/img2ppt)
+* Repo:[https://github.com/Eric-Schecter/Soft-Renderer](https://github.com/Eric-Schecter/Soft-Renderer)

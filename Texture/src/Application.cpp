@@ -40,7 +40,7 @@ void Application::run() {
 
 		renderer->setFramebuffer(static_cast<uint32_t*>(window->pixels), window->width, window->height);
 		renderer->clear();
-		renderer->render(vertices,indices,camera, modelMatrix,image);
+		renderer->render(vertices,indices,camera, modelMatrix,diffuse,normal);
 
 		if (!window->render()) {
 			break;
@@ -111,18 +111,31 @@ void Application::initScene() {
 
 				unsigned char* image_data = stbi_load(fullPath.c_str(), &width, &height, &bpp, 0);
 
-				image = new Image(width, height, bpp, image_data);
+				diffuse = new Image(width, height, bpp, image_data);
+			}
+		}
+
+		if (pMaterial->GetTextureCount(aiTextureType_NORMALS) > 0) {
+			if (pMaterial->GetTexture(aiTextureType_NORMALS, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+				std::string fullPath = MODEL_FOLDER_PATH + path.data;
+				int width = 0;
+				int height = 0;
+				int bpp = 0;
+
+				unsigned char* image_data = stbi_load(fullPath.c_str(), &width, &height, &bpp, 0);
+
+				normal = new Image(width, height, bpp, image_data);
 			}
 		}
 	}
 
 	// setup camera
-	const float fov = 45.f;
+	const float fov = glm::radians(60.f);
 	const float aspect = static_cast<float>(window->width) / window->height;
 	const float near = 0.1f;
 	const float far = 1000.f;
 	camera = new Camera();
-	camera->pos = glm::vec3(2.f, 1.5f, 2.f);
+	camera->pos = glm::vec3(1.f, 1.f, 2.f);
 	camera
 		->setView( glm::vec3(0.f, 0.f, 0.f))
 		->setProjection(fov, aspect, near, far)

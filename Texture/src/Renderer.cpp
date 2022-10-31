@@ -91,7 +91,8 @@ void Renderer::drawTriangle( glm::vec3& v1,  glm::vec3& v2,  glm::vec3& v3) {
 	}
 }
 
-void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint32_t>& indices,const Camera* camera, const glm::mat4& modelMatrix, Image* diffuse) {
+void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint32_t>& indices,const Camera* camera,
+	const glm::mat4& modelMatrix, Image* diffuse, Image* normal) {
 	glm::vec3 light = glm::normalize(glm::vec3(0,0,1.f));
 
 	// set shader uniforms
@@ -100,6 +101,7 @@ void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint
 	shader->u_model = modelMatrix;
 	shader->u_light = light;
 	shader->u_diffuse = diffuse;
+	shader->u_normal = normal;
 
 	for (auto i = 0; i < indices.size(); i+=3) {
 		// clip space, vertex shader output
@@ -108,7 +110,6 @@ void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint
 		for (int j = 0; j < size; ++j) {
 			p[j]= shader->vertex(
 				vertices[indices[static_cast<size_t>(i) + j]].position,
-				vertices[indices[static_cast<size_t>(i) + j]].normal,
 				vertices[indices[static_cast<size_t>(i) + j]].uv,
 				j
 			);

@@ -94,12 +94,12 @@ void Application::initScene() {
 
 	}
 
-	const float fov = 45.f;
+	const float fov = glm::radians(60.f);
 	const float aspect = static_cast<float>(window->width) / window->height;
 	const float near = 0.1f;
 	const float far = 1000.f;
 	camera = new Camera();
-	camera->pos = glm::vec3(2.f, 1.5f, 2.f);
+	camera->pos = glm::vec3(1.f, 1.f, 2.f);
 	camera
 		->setView( glm::vec3(0.f, 0.f, 0.f))
 		->setProjection(fov, aspect, near, far)
