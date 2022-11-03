@@ -10,12 +10,13 @@ Image::~Image() {
 	m_data = nullptr;
 }
 
-glm::vec3 Image::sample(const glm::vec2& uv) {
+glm::vec4 Image::sample(const glm::vec2& uv) {
 	int x = uv.x * m_width;
 	int y = uv.y * m_height;
 	unsigned char* pixelOffset = m_data + (x + y * m_width) * m_bpp;
 	float b = static_cast<float>(pixelOffset[0])/255.f;
 	float g = static_cast<float>(pixelOffset[1])/255.f;
 	float r = static_cast<float>(pixelOffset[2])/255.f;
-	return glm::vec3(r,g,b);
+	float a = 1.f;
+	return glm::vec4(r,g,b,a);
 }	

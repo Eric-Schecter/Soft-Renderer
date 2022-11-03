@@ -36,7 +36,7 @@ void Application::run() {
 		}
 
 		//modelMatrix = glm::rotate(modelMatrix, glm::radians(1.f), glm::vec3(0.,1.,0.));
-		//modelMatrix = glm::translate(modelMatrix, glm::vec3(0.f, 0.f, 0.1f));
+		//modelMatrix = glm::translate(modelMatrix, glm::vec3(0.1f, 0.f, 0.f));
 
 		renderer->setFramebuffer(static_cast<uint32_t*>(window->pixels), window->width, window->height);
 		renderer->clear();
@@ -100,17 +100,16 @@ void Application::initScene() {
 	// load texture
 	const std::string MODEL_FOLDER_PATH = "models/african_head/";
 	aiString path;
+	int width = 0;
+	int height = 0;
+	int bpp = 0;
+
 	for (unsigned int i = 0, j = 0; i < pScene->mNumMaterials; ++i) {
 		const aiMaterial* pMaterial = pScene->mMaterials[i];
 		if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
 			if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 				std::string fullPath = MODEL_FOLDER_PATH + path.data;
-				int width = 0;
-				int height = 0;
-				int bpp = 0;
-
 				unsigned char* image_data = stbi_load(fullPath.c_str(), &width, &height, &bpp, 0);
-
 				diffuse = new Image(width, height, bpp, image_data);
 			}
 		}
@@ -118,12 +117,7 @@ void Application::initScene() {
 		if (pMaterial->GetTextureCount(aiTextureType_NORMALS) > 0) {
 			if (pMaterial->GetTexture(aiTextureType_NORMALS, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 				std::string fullPath = MODEL_FOLDER_PATH + path.data;
-				int width = 0;
-				int height = 0;
-				int bpp = 0;
-
 				unsigned char* image_data = stbi_load(fullPath.c_str(), &width, &height, &bpp, 0);
-
 				normal = new Image(width, height, bpp, image_data);
 			}
 		}

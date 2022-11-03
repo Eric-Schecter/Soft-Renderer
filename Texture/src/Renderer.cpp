@@ -93,7 +93,7 @@ void Renderer::drawTriangle( glm::vec3& v1,  glm::vec3& v2,  glm::vec3& v3) {
 
 void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint32_t>& indices,const Camera* camera,
 	const glm::mat4& modelMatrix, Image* diffuse, Image* normal) {
-	glm::vec3 light = glm::normalize(glm::vec3(0,0,1.f));
+	glm::vec3 light = glm::normalize(glm::vec3(1.f,0.f,0.f));
 
 	// set shader uniforms
 	shader->u_projection = camera->projection;
@@ -102,6 +102,8 @@ void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint
 	shader->u_light = light;
 	shader->u_diffuse = diffuse;
 	shader->u_normal = normal;
+	auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(modelMatrix)));
+	shader->u_normalMatrix = normalMatrix;
 
 	for (auto i = 0; i < indices.size(); i+=3) {
 		// clip space, vertex shader output
@@ -111,6 +113,9 @@ void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint
 			p[j]= shader->vertex(
 				vertices[indices[static_cast<size_t>(i) + j]].position,
 				vertices[indices[static_cast<size_t>(i) + j]].uv,
+				vertices[indices[static_cast<size_t>(i) + j]].tangent,
+				vertices[indices[static_cast<size_t>(i) + j]].normal,
+				vertices[indices[static_cast<size_t>(i) + j]].biTangent,			
 				j
 			);
 		}
