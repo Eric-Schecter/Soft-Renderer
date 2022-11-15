@@ -23,9 +23,9 @@ void Renderer::clear() {
 }
 
 uint32_t Renderer::touint32(const glm::vec4& color) const {
-	uint32_t r = (uint32_t)(color.r * 255.0f);
+	uint32_t b = (uint32_t)(color.r * 255.0f);
 	uint32_t g = (uint32_t)(color.g * 255.0f);
-	uint32_t b = (uint32_t)(color.b * 255.0f);
+	uint32_t r = (uint32_t)(color.b * 255.0f);
 	uint32_t a = (uint32_t)(color.a * 255.0f);
 
 	return (a << 24) | (r << 16) | (g << 8) | b;
