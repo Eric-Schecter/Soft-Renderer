@@ -12,9 +12,12 @@ A soft renderer written in c++.
 ![Gourad Shading](./profiles/gourad-shading.png)  
 #### Texture
 ![Texture](./profiles/texture.png)  
+#### Light
+![Light](./profiles/light.png)  
 
 ## Reference
-https://github.com/ssloy/tinyrenderer
+https://github.com/ssloy/tinyrenderer  
+https://paroj.github.io/gltut/  
 
 ## License
 This project is licensed under [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
