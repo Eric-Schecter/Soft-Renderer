@@ -80,11 +80,11 @@ void Renderer::drawTriangle( glm::vec3& v1,  glm::vec3& v2,  glm::vec3& v3) {
 				v4.z += v[i].z *pos[i];
 			}
 			if (m_zbuffer[static_cast<int>(x + y * m_width)] > v4.z) {
-				glm::vec3 color = glm::vec3(1.f,1.f,1.f);
+				glm::vec4 color;
 				bool isDiscard = shader->fragment(pos,color);
 				if (!isDiscard) {
 					m_zbuffer[static_cast<int>(x + y * m_width)] = v4.z;
-					setPixel(x, y, glm::vec4(color, 1.f));
+					setPixel(x, y, color);
 				}
 			}
 		}
@@ -93,13 +93,11 @@ void Renderer::drawTriangle( glm::vec3& v1,  glm::vec3& v2,  glm::vec3& v3) {
 
 void Renderer::render(const std::vector<Vertex>& vertices,const std::vector<uint32_t>& indices,const Camera* camera,
 	const glm::mat4& modelMatrix, Image* diffuse, Image* normal) {
-	glm::vec3 light = glm::normalize(glm::vec3(1.f,0.f,0.f));
 
 	// set shader uniforms
 	shader->u_projection = camera->projection;
 	shader->u_view = camera->view;
 	shader->u_model = modelMatrix;
-	shader->u_light = light;
 	shader->u_diffuse = diffuse;
 	shader->u_normal = normal;
 	auto normalMatrix = glm::mat3(glm::transpose(glm::inverse(modelMatrix)));

@@ -15,7 +15,7 @@ public:
 		const glm::vec3& a_biTangent,
 		int index
 	);
-	bool fragment(const glm::vec3& bar,glm::vec3& gl_fragment);
+	bool fragment(const glm::vec3& bar,glm::vec4& gl_fragment);
 
 	glm::mat4 u_projection;
 	glm::mat4 u_view;
