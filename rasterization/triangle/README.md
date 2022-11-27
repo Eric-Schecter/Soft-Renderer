@@ -1,1 +1,0 @@
-![Triangle](./profiles/triangle.png)  
