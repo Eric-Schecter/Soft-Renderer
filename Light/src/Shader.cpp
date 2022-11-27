@@ -49,7 +49,7 @@ float Shader::calcDiffuseLight(const glm::vec3& normal, const glm::vec3& lightDi
 }
 
 float Shader::calcSpecularLight(const glm::vec3& viewDir, const glm::vec3& normal, const glm::vec3& lightDir) {
-	glm::vec3 halfwayDir = glm::normalize(lightDir - viewDir); //Blinn-Phong
+	glm::vec3 halfwayDir = glm::normalize(lightDir + viewDir); //Blinn-Phong
 	return std::pow(std::max(glm::dot(normal, halfwayDir), 0.f), u_material->shininess);
 }
 

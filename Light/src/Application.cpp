@@ -30,7 +30,6 @@ Application::~Application() {
 void Application::run() {
 	glm::mat4 modelMatrix = glm::mat4(1.f);
 
-	clock_t pre = std::clock();
 	float i = 0.f;
 
 	while (window->isRunning) {
