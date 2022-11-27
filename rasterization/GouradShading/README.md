@@ -1,0 +1,1 @@
+![Gourad Shading](./profiles/gourad-shading.png)  
