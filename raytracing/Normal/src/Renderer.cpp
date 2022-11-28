@@ -3,7 +3,6 @@
 #include <vcruntime_string.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include <glm/glm.hpp>
 #include <algorithm>
 
 void Renderer::setFramebuffer(uint32_t* pixels,	int width,int height) {
@@ -35,26 +34,21 @@ void Renderer::setPixel(int x,int y, const glm::vec4& color) {
 	m_framebuffer[y * m_width + x] = touint32(color);
 }
 
-bool Renderer::hitSphere(const glm::vec3& center, float radius, const Ray& ray) {
-	glm::vec3 oc = ray.origin - center;
-	float a = glm::dot(ray.direction, ray.direction);
-	float b = 2.f * glm::dot(oc, ray.direction);
-	float c = glm::dot(oc, oc) - radius * radius;
-	float discriminant = b * b - 4.f * a * c;
-	if (discriminant > 0.f) {
-		int d = 0;
+glm::vec4 Renderer::getColor(const Ray& ray, const std::vector<std::shared_ptr<Primitive>>& scene) {
+	Record record;
+	for (auto primitive : scene) {
+		primitive->hit(ray, record);
 	}
-	return discriminant > 0.f;
-}
-
-glm::vec4 Renderer::getColor(const Ray& ray) {
-	if (hitSphere(glm::vec3(0, 0, 0), 0.25, ray)) {
-		return glm::vec4(1.f);
+	if (record.isHit) {
+		glm::vec3 normal = record.normal;
+		normal += glm::vec3(1.f);
+		normal /= 2.f;
+		return glm::vec4(normal, 1.f);
 	}
 	return glm::vec4(0.f, 0.f, 0.f, 1.f);
 }
 
-void Renderer::render() {
+void Renderer::render(const std::vector<std::shared_ptr<Primitive>>& scene){
 	glm::vec3 origin(0.f,0.f,1.f);
 	float ratio = static_cast<float>(m_width) / m_height;
 	float uv_width = 2.f;
@@ -67,8 +61,8 @@ void Renderer::render() {
 			glm::vec3 target((uv.x-0.5f)*uv_width,(-uv.y+0.5f)*uv_height,0.f);
 			glm::vec3 direction = target-origin;
 			Ray ray(origin,direction);
-			glm::vec4 color = getColor(ray);
-			setPixel(w,h, color);
+			glm::vec4 color = getColor(ray, scene);
+			setPixel(w,h,color);
 		}
 	}
 }
