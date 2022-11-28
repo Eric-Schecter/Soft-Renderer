@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shadow", "rasterization\Shadow\Shadow.vcxproj", "{940C9FD0-5A46-47A3-9D02-0A9FFC185035}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Triangle", "rasterization\triangle\triangle.vcxproj", "{11102762-4D1A-4D13-BAF8-D99B2A3E3C24}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Triangle", "rasterization\Triangle\triangle.vcxproj", "{11102762-4D1A-4D13-BAF8-D99B2A3E3C24}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Texture", "rasterization\Texture\Texture.vcxproj", "{921A80EB-2036-4FEB-A2B6-FB597741ECBD}"
 EndProject
@@ -25,6 +25,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GouradShading", "rasterization\GouradShading\GouradShading.vcxproj", "{1C29F2CA-9C9E-44E2-B0D2-04C041951AF9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Camera", "rasterization\Camera\Camera.vcxproj", "{91BFBDCB-BD57-4578-81DF-947379D2B881}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sphere", "raytracing\Sphere\Sphere.vcxproj", "{A6CB9EEB-2806-4900-A7D2-EB0471E7ED25}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Normal", "raytracing\Normal\Normal.vcxproj", "{20D32654-A7B9-4A95-9CAB-69AC7D75130A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -98,6 +102,22 @@ Global
 		{91BFBDCB-BD57-4578-81DF-947379D2B881}.Release|x64.Build.0 = Release|x64
 		{91BFBDCB-BD57-4578-81DF-947379D2B881}.Release|x86.ActiveCfg = Release|Win32
 		{91BFBDCB-BD57-4578-81DF-947379D2B881}.Release|x86.Build.0 = Release|Win32
+		{A6CB9EEB-2806-4900-A7D2-EB0471E7ED25}.Debug|x64.ActiveCfg = Debug|x64
+		{A6CB9EEB-2806-4900-A7D2-EB0471E7ED25}.Debug|x64.Build.0 = Debug|x64
+		{A6CB9EEB-2806-4900-A7D2-EB0471E7ED25}.Debug|x86.ActiveCfg = Debug|Win32
+		{A6CB9EEB-2806-4900-A7D2-EB0471E7ED25}.Debug|x86.Build.0 = Debug|Win32
+		{A6CB9EEB-2806-4900-A7D2-EB0471E7ED25}.Release|x64.ActiveCfg = Release|x64
+		{A6CB9EEB-2806-4900-A7D2-EB0471E7ED25}.Release|x64.Build.0 = Release|x64
+		{A6CB9EEB-2806-4900-A7D2-EB0471E7ED25}.Release|x86.ActiveCfg = Release|Win32
+		{A6CB9EEB-2806-4900-A7D2-EB0471E7ED25}.Release|x86.Build.0 = Release|Win32
+		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Debug|x64.ActiveCfg = Debug|x64
+		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Debug|x64.Build.0 = Debug|x64
+		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Debug|x86.ActiveCfg = Debug|Win32
+		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Debug|x86.Build.0 = Debug|Win32
+		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Release|x64.ActiveCfg = Release|x64
+		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Release|x64.Build.0 = Release|x64
+		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Release|x86.ActiveCfg = Release|Win32
+		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
