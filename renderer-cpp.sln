@@ -34,6 +34,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Diffuse", "raytracing\Diffu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Metal", "raytracing\Metal\Metal.vcxproj", "{3430E4D5-5528-42AE-B64D-06DE67847804}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dielectrics", "raytracing\Dielectrics\Dielectrics.vcxproj", "{54407B7F-40B1-4E46-84D3-982C049D37AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -138,6 +140,14 @@ Global
 		{3430E4D5-5528-42AE-B64D-06DE67847804}.Release|x64.Build.0 = Release|x64
 		{3430E4D5-5528-42AE-B64D-06DE67847804}.Release|x86.ActiveCfg = Release|Win32
 		{3430E4D5-5528-42AE-B64D-06DE67847804}.Release|x86.Build.0 = Release|Win32
+		{54407B7F-40B1-4E46-84D3-982C049D37AE}.Debug|x64.ActiveCfg = Debug|x64
+		{54407B7F-40B1-4E46-84D3-982C049D37AE}.Debug|x64.Build.0 = Debug|x64
+		{54407B7F-40B1-4E46-84D3-982C049D37AE}.Debug|x86.ActiveCfg = Debug|Win32
+		{54407B7F-40B1-4E46-84D3-982C049D37AE}.Debug|x86.Build.0 = Debug|Win32
+		{54407B7F-40B1-4E46-84D3-982C049D37AE}.Release|x64.ActiveCfg = Release|x64
+		{54407B7F-40B1-4E46-84D3-982C049D37AE}.Release|x64.Build.0 = Release|x64
+		{54407B7F-40B1-4E46-84D3-982C049D37AE}.Release|x86.ActiveCfg = Release|Win32
+		{54407B7F-40B1-4E46-84D3-982C049D37AE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
