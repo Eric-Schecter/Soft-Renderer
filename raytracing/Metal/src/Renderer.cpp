@@ -47,9 +47,9 @@ float Renderer::random(float min, float max) {
 
 glm::vec3 Renderer::getRandomUnitVec() {
 	while (true) {
-		glm::vec3 vec = glm::normalize(glm::vec3(random(-1.f, 1.f), random(-1.f, 1.f), random(-1.f, 1.f)));
+		glm::vec3 vec = glm::vec3(random(-1.f, 1.f), random(-1.f, 1.f), random(-1.f, 1.f));
 		if (glm::length(vec) < 1.f) {
-			return vec;
+			return glm::normalize(vec);
 		}
 	}
 }
