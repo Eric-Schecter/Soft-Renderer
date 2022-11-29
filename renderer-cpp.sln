@@ -30,6 +30,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sphere", "raytracing\Sphere
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Normal", "raytracing\Normal\Normal.vcxproj", "{20D32654-A7B9-4A95-9CAB-69AC7D75130A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Diffuse", "raytracing\Diffuse\Diffuse.vcxproj", "{11649430-780D-4923-B447-A36636A2A3C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -118,6 +120,14 @@ Global
 		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Release|x64.Build.0 = Release|x64
 		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Release|x86.ActiveCfg = Release|Win32
 		{20D32654-A7B9-4A95-9CAB-69AC7D75130A}.Release|x86.Build.0 = Release|Win32
+		{11649430-780D-4923-B447-A36636A2A3C4}.Debug|x64.ActiveCfg = Debug|x64
+		{11649430-780D-4923-B447-A36636A2A3C4}.Debug|x64.Build.0 = Debug|x64
+		{11649430-780D-4923-B447-A36636A2A3C4}.Debug|x86.ActiveCfg = Debug|Win32
+		{11649430-780D-4923-B447-A36636A2A3C4}.Debug|x86.Build.0 = Debug|Win32
+		{11649430-780D-4923-B447-A36636A2A3C4}.Release|x64.ActiveCfg = Release|x64
+		{11649430-780D-4923-B447-A36636A2A3C4}.Release|x64.Build.0 = Release|x64
+		{11649430-780D-4923-B447-A36636A2A3C4}.Release|x86.ActiveCfg = Release|Win32
+		{11649430-780D-4923-B447-A36636A2A3C4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
