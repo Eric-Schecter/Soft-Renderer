@@ -32,6 +32,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Normal", "raytracing\Normal
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Diffuse", "raytracing\Diffuse\Diffuse.vcxproj", "{11649430-780D-4923-B447-A36636A2A3C4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Metal", "raytracing\Metal\Metal.vcxproj", "{3430E4D5-5528-42AE-B64D-06DE67847804}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -128,6 +130,14 @@ Global
 		{11649430-780D-4923-B447-A36636A2A3C4}.Release|x64.Build.0 = Release|x64
 		{11649430-780D-4923-B447-A36636A2A3C4}.Release|x86.ActiveCfg = Release|Win32
 		{11649430-780D-4923-B447-A36636A2A3C4}.Release|x86.Build.0 = Release|Win32
+		{3430E4D5-5528-42AE-B64D-06DE67847804}.Debug|x64.ActiveCfg = Debug|x64
+		{3430E4D5-5528-42AE-B64D-06DE67847804}.Debug|x64.Build.0 = Debug|x64
+		{3430E4D5-5528-42AE-B64D-06DE67847804}.Debug|x86.ActiveCfg = Debug|Win32
+		{3430E4D5-5528-42AE-B64D-06DE67847804}.Debug|x86.Build.0 = Debug|Win32
+		{3430E4D5-5528-42AE-B64D-06DE67847804}.Release|x64.ActiveCfg = Release|x64
+		{3430E4D5-5528-42AE-B64D-06DE67847804}.Release|x64.Build.0 = Release|x64
+		{3430E4D5-5528-42AE-B64D-06DE67847804}.Release|x86.ActiveCfg = Release|Win32
+		{3430E4D5-5528-42AE-B64D-06DE67847804}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

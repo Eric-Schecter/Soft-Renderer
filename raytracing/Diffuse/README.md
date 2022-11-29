@@ -1,1 +1,1 @@
-![Normal](./profiles/normal.png)  
+![Diffuse](./profiles/diffuse.png)  

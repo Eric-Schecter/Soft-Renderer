@@ -76,12 +76,13 @@ void Renderer::render(const std::vector<std::shared_ptr<Primitive>>& scene){
 	float ratio = static_cast<float>(m_width) / m_height;
 	float uv_width = 2.f;
 	float uv_height = uv_width / ratio;
+	float targetYoffset = 0.25f;
 
 	#pragma omp parallel for
 	for (int h = 0; h < m_height; ++h) {
 		for (int w = 0; w < m_width; ++w) {
 			glm::vec2 uv(static_cast<float>(w)/m_width,static_cast<float>(h)/m_height);
-			glm::vec3 target((uv.x-0.5f)*uv_width,(-uv.y+0.5f)*uv_height,0.f);
+			glm::vec3 target((uv.x-0.5f)*uv_width,(-uv.y+0.5f + targetYoffset)*uv_height,0.f);
 			glm::vec3 direction = target-origin;
 			Ray ray(origin,direction);
 			glm::vec3 color = getColor(ray, scene, m_max);
