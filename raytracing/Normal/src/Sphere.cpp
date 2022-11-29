@@ -12,15 +12,15 @@ bool Sphere::hit(const Ray& ray, Record& record) {
 		return false;
 	}
 
-	float min = 0.f; 
+	float min = 0.0001f;
 	float max = record.t;
-	float root = (-hb + std::sqrt(discriminant)) / a;
+	float sqrtd = std::sqrt(discriminant);
+	float root = (-hb - sqrtd) / a;
 	if (root<min || root>max) {
-		return false;
-	}
-	root = (-hb - std::sqrt(discriminant)) / a;
-	if (root<min || root>max) {
-		return false;
+		root = (-hb + sqrtd) / a;
+		if (root<min || root>max) {
+			return false;
+		}
 	}
 
 	record.isHit = true;
