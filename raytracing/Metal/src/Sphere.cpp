@@ -27,5 +27,6 @@ bool Sphere::hit(const Ray& ray, Record& record) {
 	record.t = root;
 	record.pos = ray.at(root);
 	record.normal = glm::normalize((record.pos - center) / radius);
+	record.material = material;
 	return true;
 }

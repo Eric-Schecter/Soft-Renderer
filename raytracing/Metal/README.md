@@ -1,1 +1,1 @@
-![Normal](./profiles/normal.png)  
+![Metal](./profiles/metal.png)  

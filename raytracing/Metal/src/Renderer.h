@@ -11,8 +11,6 @@
 class Renderer
 {
 public:
-	Renderer();
-
 	void setFramebuffer(uint32_t* pixels,int width,int height);
 	void clear();
 	void render(const std::vector<std::shared_ptr<Primitive>>& scene);
@@ -20,7 +18,7 @@ public:
 private:
 	void setPixel(int x, int y, const glm::vec4& color);
 	uint32_t touint32(const glm::vec4& color) const;
-	glm::vec3 getColor(const Ray& ray, const std::vector<std::shared_ptr<Primitive>>& scene,float depth);
+	glm::vec3 getColor(const Ray& ray, const std::vector<std::shared_ptr<Primitive>>& scene,int depth);
 	glm::vec3 getRandomUnitVec();
 	float random(float min, float max);
 

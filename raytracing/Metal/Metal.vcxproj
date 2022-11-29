@@ -139,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\Metal.cpp" />
+    <ClCompile Include="src\Lambertian.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Ray.cpp" />
@@ -147,6 +150,9 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Metal.h" />
+    <ClInclude Include="src\Lambertian.h" />
+    <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Primitive.h" />
     <ClInclude Include="src\Ray.h" />

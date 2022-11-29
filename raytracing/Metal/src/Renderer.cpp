@@ -5,12 +5,6 @@
 #include <glm/vec3.hpp>
 #include <glm/glm.hpp>
 #include <algorithm>
-#include <cstdlib>
-#include <ctime>
-
-Renderer::Renderer() {
-	std::srand(time(NULL));
-}
 
 void Renderer::setFramebuffer(uint32_t* pixels,	int width,int height) {
 	m_framebuffer = pixels;
@@ -41,20 +35,7 @@ void Renderer::setPixel(int x,int y, const glm::vec4& color) {
 	m_framebuffer[y * m_width + x] = touint32(color);
 }
 
-float Renderer::random(float min, float max) {
-	return std::rand() * (max-min)/RAND_MAX + min;
-}
-
-glm::vec3 Renderer::getRandomUnitVec() {
-	while (true) {
-		glm::vec3 vec = glm::vec3(random(-1.f, 1.f), random(-1.f, 1.f), random(-1.f, 1.f));
-		if (glm::length(vec) < 1.f) {
-			return glm::normalize(vec);
-		}
-	}
-}
-
-glm::vec3 Renderer::getColor(const Ray& ray, const std::vector<std::shared_ptr<Primitive>>& scene,float depth) {
+glm::vec3 Renderer::getColor(const Ray& ray, const std::vector<std::shared_ptr<Primitive>>& scene,int depth) {
 	if (depth <= 0) {
 		return glm::vec3(0.f, 0.f, 0.f);
 	}
@@ -63,9 +44,12 @@ glm::vec3 Renderer::getColor(const Ray& ray, const std::vector<std::shared_ptr<P
 		primitive->hit(ray, record);
 	}
 	if (record.isHit) {
-		glm::vec3 target(record.pos+record.normal+getRandomUnitVec()); 
-		Ray reflectedRay(record.pos, glm::normalize(target - record.pos));
-		return 0.5f * getColor(reflectedRay,scene,depth-1);
+		Ray reflectedRay;
+		glm::vec3 attenuation;
+		if (record.material->scatter(ray, record, reflectedRay, attenuation)) {
+			return attenuation * getColor(reflectedRay, scene, depth - 1);
+		}
+		return glm::vec3(0.f);
 	}
 	auto t = 0.5f * (ray.direction.y + 1.0f);
 	return (1.0f - t) * glm::vec3(1.0f, 1.0f, 1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
@@ -76,12 +60,13 @@ void Renderer::render(const std::vector<std::shared_ptr<Primitive>>& scene){
 	float ratio = static_cast<float>(m_width) / m_height;
 	float uv_width = 2.f;
 	float uv_height = uv_width / ratio;
+	float targetYoffset = 0.25f;
 
 	#pragma omp parallel for
 	for (int h = 0; h < m_height; ++h) {
 		for (int w = 0; w < m_width; ++w) {
 			glm::vec2 uv(static_cast<float>(w)/m_width,static_cast<float>(h)/m_height);
-			glm::vec3 target((uv.x-0.5f)*uv_width,(-uv.y+0.5f)*uv_height,0.f);
+			glm::vec3 target((uv.x-0.5f)*uv_width,(-uv.y+0.5f+ targetYoffset)*uv_height,0.f);
 			glm::vec3 direction = target-origin;
 			Ray ray(origin,direction);
 			glm::vec3 color = getColor(ray, scene, m_max);
