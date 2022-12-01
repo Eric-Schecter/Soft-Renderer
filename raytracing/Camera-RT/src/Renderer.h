@@ -26,6 +26,6 @@ private:
 	uint32_t*  m_framebuffer = nullptr;
 	int m_width = 0;
 	int m_height = 0;
-	int m_max = 5;
+	int m_max = 50;
 };
 

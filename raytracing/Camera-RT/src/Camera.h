@@ -9,8 +9,7 @@
 class Camera
 {
 public:
-	Camera() = default;
-	Camera(const glm::vec3 pos,const glm::vec3 lookat,float aspect,float fov);
+	Camera(const glm::vec3 pos,const glm::vec3 lookat,float aspect,float fov, float aperture = 0.f, float focus_dist = 1.f);
 
 	Ray getRay(const glm::vec2& pixel,const glm::vec2& screenSpace);
 
@@ -22,5 +21,8 @@ public:
 
 private:
 	glm::mat3 cameraMatrix;
+	float lenRadius = 0.f;
+	glm::vec3 u;
+	glm::vec3 v;
 };
 

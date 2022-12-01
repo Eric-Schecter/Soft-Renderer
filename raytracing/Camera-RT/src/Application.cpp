@@ -66,7 +66,9 @@ void Application::initScene() {
 	glm::vec3 lookat(0.f, 0.25f, 0.f);
 	float aspect = static_cast<float>(window->width) / window->height;
 	float fov = glm::radians(90.f);
-	camera = std::make_shared<Camera>(pos,lookat,aspect,fov);
+	float aperture = 0.f;
+	float focus_dist = glm::length(pos - lookat);
+	camera = std::make_shared<Camera>(pos,lookat,aspect,fov, aperture, focus_dist);
 }
 
 void Application::release(void* pointer) {
