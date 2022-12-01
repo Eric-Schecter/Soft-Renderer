@@ -1,1 +1,1 @@
-![Metal](./profiles/metal.png)  
+![Camera](./profiles/camera.png)  

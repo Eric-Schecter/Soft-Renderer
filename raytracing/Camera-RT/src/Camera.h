@@ -21,8 +21,6 @@ public:
 	float fov = glm::radians(60.f);
 
 private:
-	glm::vec3 horizontal;
-	glm::vec3 vertical;
-	glm::vec3 depth;
+	glm::mat3 cameraMatrix;
 };
 
