@@ -21,7 +21,7 @@ private:
 	uint32_t touint32(const glm::vec4& color) const;
 	glm::vec3 getColor(const Ray& ray, const std::vector<std::shared_ptr<Primitive>>& scene,int depth);
 	glm::vec3 getRandomUnitVec();
-	float random(float min, float max);
+	void gammaCorrect(glm::vec3& color, float gammaIndex = 2.2f);
 
 	uint32_t*  m_framebuffer = nullptr;
 	int m_width = 0;

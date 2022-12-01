@@ -57,6 +57,12 @@ glm::vec3 Renderer::getColor(const Ray& ray, const std::vector<std::shared_ptr<P
 	return (1.0f - t) * glm::vec3(1.0f, 1.0f, 1.0f) + t * glm::vec3(0.5f, 0.7f, 1.0f);
 }
 
+void Renderer::gammaCorrect(glm::vec3& color,float gammaIndex) {
+	color.x = std::pow(color.x, 1.f/gammaIndex);
+	color.y = std::pow(color.y, 1.f/gammaIndex);
+	color.z = std::pow(color.z, 1.f/gammaIndex);
+}
+
 void Renderer::render(const std::vector<std::shared_ptr<Primitive>>& scene, std::shared_ptr<Camera> camera){
 	#pragma omp parallel for
 	for (int h = 0; h < m_height; ++h) {
@@ -68,7 +74,9 @@ void Renderer::render(const std::vector<std::shared_ptr<Primitive>>& scene, std:
 				Ray ray = camera->getRay(glm::vec2(u,v), glm::vec2(m_width, m_height));
 				color += getColor(ray, scene, m_max);
 			}
-			setPixel(w,h,glm::vec4(color/static_cast<float>(m_sampleCount),1.f));
+			color /= static_cast<float>(m_sampleCount);
+			gammaCorrect(color,2.2f);
+			setPixel(w,h,glm::vec4(color,1.f));
 		}
 	}
 }
