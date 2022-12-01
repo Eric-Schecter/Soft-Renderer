@@ -21,8 +21,7 @@ public:
 
 private:
 	glm::mat3 cameraMatrix;
+	glm::mat3 cameraMatrixFocus;
 	float lenRadius = 0.f;
-	glm::vec3 u;
-	glm::vec3 v;
 };
 

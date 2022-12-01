@@ -27,6 +27,6 @@ private:
 	int m_width = 0;
 	int m_height = 0;
 	int m_max = 50;
-	int m_sampleCount = 10;
+	int m_sampleCount = 1;
 };
 
