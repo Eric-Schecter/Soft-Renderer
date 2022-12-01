@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <algorithm>
 
+#include "utils.h"
+
 void Renderer::setFramebuffer(uint32_t* pixels,	int width,int height) {
 	m_framebuffer = pixels;
 	m_width = width;
@@ -59,9 +61,14 @@ void Renderer::render(const std::vector<std::shared_ptr<Primitive>>& scene, std:
 	#pragma omp parallel for
 	for (int h = 0; h < m_height; ++h) {
 		for (int w = 0; w < m_width; ++w) {
-			Ray ray = camera->getRay(glm::vec2(w + 0.5f,h + 0.5f),glm::vec2(m_width,m_height));
-			glm::vec3 color = getColor(ray, scene, m_max);
-			setPixel(w,h,glm::vec4(color,1.f));
+			glm::vec3 color(0.f);
+			for (int i = 0; i < m_sampleCount;++i) {
+				float u = w + 0.5f + utils::random(-0.5,0.5);
+				float v = h + 0.5f + utils::random(-0.5,0.5);
+				Ray ray = camera->getRay(glm::vec2(u,v), glm::vec2(m_width, m_height));
+				color += getColor(ray, scene, m_max);
+			}
+			setPixel(w,h,glm::vec4(color/static_cast<float>(m_sampleCount),1.f));
 		}
 	}
 }
