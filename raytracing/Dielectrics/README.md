@@ -1,1 +1,1 @@
-![Metal](./profiles/metal.png)  
+![Dielectrics](./profiles/dielectrics.png)  
