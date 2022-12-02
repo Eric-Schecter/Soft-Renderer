@@ -44,6 +44,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Noise", "raytracing\Noise\N
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Image", "raytracing\Image\Image.vcxproj", "{A70E61AC-CFCF-4FF1-855C-F363309250BD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Light-RT", "raytracing\Light-RT\Light-RT.vcxproj", "{44C7E5FE-EC7E-41FD-9659-EE1A8C5601AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -188,6 +190,14 @@ Global
 		{A70E61AC-CFCF-4FF1-855C-F363309250BD}.Release|x64.Build.0 = Release|x64
 		{A70E61AC-CFCF-4FF1-855C-F363309250BD}.Release|x86.ActiveCfg = Release|Win32
 		{A70E61AC-CFCF-4FF1-855C-F363309250BD}.Release|x86.Build.0 = Release|Win32
+		{44C7E5FE-EC7E-41FD-9659-EE1A8C5601AB}.Debug|x64.ActiveCfg = Debug|x64
+		{44C7E5FE-EC7E-41FD-9659-EE1A8C5601AB}.Debug|x64.Build.0 = Debug|x64
+		{44C7E5FE-EC7E-41FD-9659-EE1A8C5601AB}.Debug|x86.ActiveCfg = Debug|Win32
+		{44C7E5FE-EC7E-41FD-9659-EE1A8C5601AB}.Debug|x86.Build.0 = Debug|Win32
+		{44C7E5FE-EC7E-41FD-9659-EE1A8C5601AB}.Release|x64.ActiveCfg = Release|x64
+		{44C7E5FE-EC7E-41FD-9659-EE1A8C5601AB}.Release|x64.Build.0 = Release|x64
+		{44C7E5FE-EC7E-41FD-9659-EE1A8C5601AB}.Release|x86.ActiveCfg = Release|Win32
+		{44C7E5FE-EC7E-41FD-9659-EE1A8C5601AB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
