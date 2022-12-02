@@ -40,6 +40,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Camera-RT", "raytracing\Cam
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Texture-RT", "raytracing\Texture-RT\Texture-RT.vcxproj", "{7F233520-E2EE-4E55-AF87-1399B04A4E1D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Noise", "raytracing\Noise\Noise.vcxproj", "{736F9392-5F74-429E-A17F-6864D6538BA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -168,6 +170,14 @@ Global
 		{7F233520-E2EE-4E55-AF87-1399B04A4E1D}.Release|x64.Build.0 = Release|x64
 		{7F233520-E2EE-4E55-AF87-1399B04A4E1D}.Release|x86.ActiveCfg = Release|Win32
 		{7F233520-E2EE-4E55-AF87-1399B04A4E1D}.Release|x86.Build.0 = Release|Win32
+		{736F9392-5F74-429E-A17F-6864D6538BA1}.Debug|x64.ActiveCfg = Debug|x64
+		{736F9392-5F74-429E-A17F-6864D6538BA1}.Debug|x64.Build.0 = Debug|x64
+		{736F9392-5F74-429E-A17F-6864D6538BA1}.Debug|x86.ActiveCfg = Debug|Win32
+		{736F9392-5F74-429E-A17F-6864D6538BA1}.Debug|x86.Build.0 = Debug|Win32
+		{736F9392-5F74-429E-A17F-6864D6538BA1}.Release|x64.ActiveCfg = Release|x64
+		{736F9392-5F74-429E-A17F-6864D6538BA1}.Release|x64.Build.0 = Release|x64
+		{736F9392-5F74-429E-A17F-6864D6538BA1}.Release|x86.ActiveCfg = Release|Win32
+		{736F9392-5F74-429E-A17F-6864D6538BA1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
