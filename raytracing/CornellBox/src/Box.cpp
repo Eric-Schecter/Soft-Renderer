@@ -34,12 +34,16 @@ glm::vec2 Box::getUV(const glm::vec3& p) {
 
 bool Box::hit(const Ray& ray, Record& record) {
     // get tmin,tmax x.y.z compoent
-    float tmin = (bounds[ray.sign[0]].x - ray.origin.x) * ray.invdir.x;
-    float tmax = (bounds[1 - ray.sign[0]].x - ray.origin.x) * ray.invdir.x;
+    // multiple invdir would get the length of t x/y/z component, which is also the length of ray
+    // get the min component, then get the min length of ray
+    float txmin = (bounds[ray.sign[0]].x - ray.origin.x) * ray.invdir.x;
+    float txmax = (bounds[1 - ray.sign[0]].x - ray.origin.x) * ray.invdir.x;
     float tymin = (bounds[ray.sign[1]].y - ray.origin.y) * ray.invdir.y;
     float tymax = (bounds[1 - ray.sign[1]].y - ray.origin.y) * ray.invdir.y;
     float tzmin = (bounds[ray.sign[2]].z - ray.origin.z) * ray.invdir.z;
     float tzmax = (bounds[1 - ray.sign[2]].z - ray.origin.z) * ray.invdir.z;
+    float tmin = txmin;
+    float tmax = txmax;
 
     if ((tmin > tymax) || (tymin > tmax)) {
         return false;
