@@ -1,0 +1,1 @@
+![cornell-box](./profiles/cornell-box.png)  
