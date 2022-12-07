@@ -27,7 +27,7 @@ private:
 	uint32_t*  m_framebuffer = nullptr;
 	int m_width = 0;
 	int m_height = 0;
-	int m_max = 50;
-	int m_sampleCount = 1; 
+	int m_max = 10;
+	int m_sampleCount = 50; 
 };
 

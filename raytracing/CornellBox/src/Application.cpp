@@ -86,8 +86,8 @@ void Application::initScene() {
 		std::make_shared<Lambertian>(std::make_shared<ColorTexture>(glm::vec3(.9f)))
 	);
 	auto light = std::make_shared<Box>(
-		glm::vec3(-0.3f, 0.85f, 0.f),
-		glm::vec3(0.3f, 0.86f, 0.4f),
+		glm::vec3(-0.125f, 0.95f, 0.f),
+		glm::vec3(0.125f, 0.96f, 0.25f),
 		std::make_shared<Light>(std::make_shared<ColorTexture>(glm::vec3(1.f)))
 	);
 	auto sphere = std::make_shared<Sphere>(
