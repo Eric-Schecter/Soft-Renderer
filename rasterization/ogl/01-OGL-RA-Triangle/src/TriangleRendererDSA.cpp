@@ -7,27 +7,24 @@
 
 // DSA would bind automaticall, so no glBind* commands
 TriangleRendererDSA::TriangleRendererDSA() {
-	GLfloat vertices[] = {
-		-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-		 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-		 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
-	};
-
 	// cpu -> buffer -> gpu
-
 	GLuint vbo;
+	GLuint ibo;
 	// init and bind buffer
 	// glCreate* = glGen* + glBindBuffer
 	glCreateVertexArrays(1, &vao);
 	glCreateBuffers(1, &vbo);
+	glCreateBuffers(1, &ibo);
 	// pass data from cpu to buffer	
 	// glNamedBufferData = glBufferData
 	// get buffer target type by buffer itself
-	glNamedBufferData(vbo, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glNamedBufferData(vbo, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
+	glNamedBufferData(ibo, sizeof(indices), indices.data(), GL_STATIC_DRAW);
 	//glNamedBufferStorage(vbo, 18 * sizeof(GL_FLOAT), vertices, GL_DYNAMIC_STORAGE_BIT);
 	// bind buffer to variable in gpu
 	// glVertexArrayVertexBuffer + glVertexArrayAttribFormat = glVertexAttribPointer + vao bind
 	glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(GL_FLOAT) * 6);
+	glVertexArrayElementBuffer(vao, ibo);
 
 	glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
 	glVertexArrayAttribFormat(vao, 1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3);
@@ -62,7 +59,7 @@ void TriangleRendererDSA::render(int width, int height) const {
 	// set vertex data
 	glBindVertexArray(vao);
 	// draw
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	// reset
 	glBindVertexArray(0);
 	glUseProgram(0);

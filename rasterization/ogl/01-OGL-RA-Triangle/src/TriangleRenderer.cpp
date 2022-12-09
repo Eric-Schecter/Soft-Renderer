@@ -6,23 +6,20 @@
 #include "./loadShaders.h"
 
 TriangleRenderer::TriangleRenderer() {
-	GLfloat vertices[] = {
-	-0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-	 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
-	};
-
 	// cpu -> buffer -> gpu
-
 	GLuint vbo;
+	GLuint ibo;
 	// init buffer
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ibo);
 	// bind buffer
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	// pass data from cpu to buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(), GL_STATIC_DRAW);
 	// bind buffer to variable in gpu
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (void*)(sizeof(GLfloat) * 3));
@@ -30,7 +27,6 @@ TriangleRenderer::TriangleRenderer() {
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	// reset
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0); // can be ignored
 
 	const std::string VERTEX_SHADER_PATH = "shaders/triangle.vert";
@@ -55,8 +51,8 @@ void TriangleRenderer::render(int width, int height) const {
 	// set vertex data
 	glBindVertexArray(vao);
 	// draw
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	// reset
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	// reset	
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
