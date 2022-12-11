@@ -5,7 +5,7 @@
 
 #include "./loadShaders.h"
 
-// DSA would bind automaticall, so no glBind* commands
+// DSA would bind automatically, so no glBind* commands
 TriangleRendererDSA::TriangleRendererDSA() {
 	// cpu -> buffer -> gpu
 	GLuint vbo;
