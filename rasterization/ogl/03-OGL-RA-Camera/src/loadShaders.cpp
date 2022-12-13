@@ -129,6 +129,30 @@ LoadShaders(ShaderInfo* shaders, const GLchar** feedbackVaryings)
     return program;
 }
 
+GLuint
+LoadShadersPipeline(ShaderInfoPipeline* shaders, const GLchar** feedbackVaryings)
+{
+    if (shaders == NULL) { return 0; }
+    GLuint pipeline = 0;
+    glCreateProgramPipelines(1, &pipeline);
+
+    ShaderInfoPipeline* entry = shaders;
+
+    while (entry->type != GL_NONE) {
+        const GLchar* source = ReadShader(entry->filename);
+
+        // generate, init, compile, link shader program
+        GLuint program = glCreateShaderProgramv(entry->type, 1, &source);
+        *(entry->program) = program;
+
+        glUseProgramStages(pipeline, entry->bit, *(entry->program));
+
+        ++entry;
+    }
+
+    return pipeline;
+}
+
 //----------------------------------------------------------------------------
 #ifdef __cplusplus
 }

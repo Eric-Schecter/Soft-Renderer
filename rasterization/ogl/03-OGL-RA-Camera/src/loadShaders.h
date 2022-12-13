@@ -31,7 +31,15 @@ typedef struct {
     GLuint       shader;
 } ShaderInfo;
 
+typedef struct {
+    GLenum       type;
+    GLuint        bit;
+    const char*  filename;
+    GLuint*      program;
+} ShaderInfoPipeline;
+
 GLuint LoadShaders(ShaderInfo*, const GLchar** feedbackVaryings = nullptr);
+GLuint LoadShadersPipeline(ShaderInfoPipeline* shaders, const GLchar** feedbackVaryings = nullptr);
 
 //----------------------------------------------------------------------------
 

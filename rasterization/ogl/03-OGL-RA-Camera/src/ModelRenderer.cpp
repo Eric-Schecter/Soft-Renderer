@@ -11,15 +11,25 @@ void ModelRenderer::render(const Mesh& mesh, Camera* camera) const {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
-	// bind program
-	glUseProgram(mesh.program);
+	//// bind program
+	//glUseProgram(mesh.program);
+	//// set vertex data
+	//glBindVertexArray(mesh.vao);
+	//// update uniform
+	//glUniformMatrix4fv(mesh.uModelMatrix, 1, GL_FALSE, glm::value_ptr(mesh.modelMatrix));
+	//glUniformMatrix4fv(mesh.uViewMatrix, 1, GL_FALSE, glm::value_ptr(camera->view));
+	//glUniformMatrix4fv(mesh.uProjectionMatrix, 1, GL_FALSE, glm::value_ptr(camera->projection));
+
+	//// draw
+	//glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
+	//// reset	
+	//glBindVertexArray(0);
+	//glUseProgram(0);
+
+	// bind pipeline
+	glBindProgramPipeline(mesh.pipeline);
 	// set vertex data
 	glBindVertexArray(mesh.vao);
-	// update uniform
-	glUniformMatrix4fv(mesh.uModelMatrix, 1, GL_FALSE, glm::value_ptr(mesh.modelMatrix));
-	glUniformMatrix4fv(mesh.uViewMatrix, 1, GL_FALSE, glm::value_ptr(camera->view));
-	glUniformMatrix4fv(mesh.uProjectionMatrix, 1, GL_FALSE, glm::value_ptr(camera->projection));
-
 	// draw
 	glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
 	// reset	

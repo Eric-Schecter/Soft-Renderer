@@ -48,7 +48,7 @@ void Application::initScene() {
 		VERTEX_SHADER_PATH,
 		FRAGMENT_SHADER_PATH
 	);
-	mesh.setupUniforms();
+	mesh.setupUniforms(camera);
 	scene.push_back(mesh);
 }
 

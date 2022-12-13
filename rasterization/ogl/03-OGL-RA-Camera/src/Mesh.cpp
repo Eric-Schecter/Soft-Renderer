@@ -5,6 +5,7 @@
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "./loadShaders.h"
 #include "Vertex.h"
@@ -49,7 +50,8 @@ void Mesh::setupModel(std::string path) {
 
 	}
 
-	//// cpu -> buffer -> gpu
+	// cpu -> buffer -> gpu
+	// vao style
 	//GLuint vbo;
 	//GLuint ibo;
 	//// init buffer
@@ -75,10 +77,8 @@ void Mesh::setupModel(std::string path) {
 	//glEnableVertexAttribArray(2);
 	//glEnableVertexAttribArray(3);
 	//glEnableVertexAttribArray(4);
-	//// reset
-	//glBindVertexArray(0); // can be ignored
 
-		// cpu -> buffer -> gpu
+	// DSA style
 	GLuint vbo;
 	GLuint ibo;
 	// init and bind buffer
@@ -94,7 +94,7 @@ void Mesh::setupModel(std::string path) {
 	//glNamedBufferStorage(vbo, 18 * sizeof(GL_FLOAT), vertices, GL_DYNAMIC_STORAGE_BIT);
 	// bind buffer to variable in gpu
 	// glVertexArrayVertexBuffer + glVertexArrayAttribFormat = glVertexAttribPointer + vao bind
-	glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(GL_FLOAT) * 14);
+	glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(Vertex));
 	glVertexArrayElementBuffer(vao, ibo);
 
 	glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, position));
@@ -119,17 +119,56 @@ void Mesh::setupModel(std::string path) {
 }
 
 void Mesh::setupProgram(std::string VERTEX_SHADER_PATH, std::string FRAGMENT_SHADER_PATH) {
-	ShaderInfo shaders[] = {
-	 {GL_VERTEX_SHADER,   VERTEX_SHADER_PATH.c_str()},
-	 {GL_FRAGMENT_SHADER, FRAGMENT_SHADER_PATH.c_str()},
-	 {GL_NONE,            nullptr}
+	// program
+	//ShaderInfo shaders[] = {
+	// {GL_VERTEX_SHADER,   VERTEX_SHADER_PATH.c_str()},
+	// {GL_FRAGMENT_SHADER, FRAGMENT_SHADER_PATH.c_str()},
+	// {GL_NONE,            nullptr}
+	//};
+
+	//program = LoadShaders(shaders);
+
+	// pipeline
+	ShaderInfoPipeline shaders[] = {
+	 {GL_VERTEX_SHADER,   GL_VERTEX_SHADER_BIT, VERTEX_SHADER_PATH.c_str(), &vertProg},
+	 {GL_FRAGMENT_SHADER, GL_FRAGMENT_SHADER_BIT, FRAGMENT_SHADER_PATH.c_str(), &fragProg},
+	 {GL_NONE,            GL_NONE, nullptr, 0}
 	};
 
-	program = LoadShaders(shaders);
+	pipeline = LoadShadersPipeline(shaders);
 }
 
-void Mesh::setupUniforms() {
-	uModelMatrix = glGetUniformLocation(program, "uModelMatrix");
-	uViewMatrix = glGetUniformLocation(program, "uViewMatrix");
-	uProjectionMatrix = glGetUniformLocation(program, "uProjectionMatrix");
+void Mesh::setupUniforms(Camera* camera) {
+	//// basic
+	//uModelMatrix = glGetUniformLocation(program, "uModelMatrix");
+	//uViewMatrix = glGetUniformLocation(program, "uViewMatrix");
+	//uProjectionMatrix = glGetUniformLocation(program, "uProjectionMatrix");
+
+	// with program
+	uModelMatrix = glGetUniformLocation(vertProg, "uModelMatrix");
+	uViewMatrix = glGetUniformLocation(vertProg, "uViewMatrix");
+	uProjectionMatrix = glGetUniformLocation(vertProg, "uProjectionMatrix");
+
+	glProgramUniformMatrix4fv(vertProg, uModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+	glProgramUniformMatrix4fv(vertProg, uViewMatrix, 1, GL_FALSE, glm::value_ptr(camera->view));
+	glProgramUniformMatrix4fv(vertProg, uProjectionMatrix, 1, GL_FALSE, glm::value_ptr(camera->projection));
+
+	//// ubo style
+	//GLuint uniformBlockIndex = glGetUniformBlockIndex(vertProg, "UniformBufferObject");
+	//glUniformBlockBinding(vertProg, uniformBlockIndex, 0);
+
+	//GLuint ubo;
+	////// gen + bind + bufferdata
+	////glGenBuffers(1, &ubo);
+	////glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	////glBufferData(GL_UNIFORM_BUFFER, 3 * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+
+	//// create + namedbufferdata
+	//glCreateBuffers(1, &ubo);
+	//glNamedBufferData(ubo, 3 * sizeof(glm::mat4), nullptr, GL_STATIC_DRAW);
+
+	//glBindBufferRange(GL_UNIFORM_BUFFER, 0, ubo, 0, 3 * sizeof(glm::mat4));
+	//glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(camera->view));
+	//glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->projection));
+	//glBufferSubData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(modelMatrix));
 }

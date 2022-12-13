@@ -11,6 +11,8 @@
 class Renderer
 {
 public:
+	Renderer();
+
 	virtual void render(const Mesh& mesh,Camera* camera) const = 0;
 };
 
