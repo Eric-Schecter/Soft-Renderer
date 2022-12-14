@@ -54,6 +54,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02-OGL-RA-SimpleModel", "ra
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03-OGL-RA-Camera", "rasterization\ogl\03-OGL-RA-Camera\03-OGL-RA-Camera.vcxproj", "{81F72E34-42C1-4C37-A904-9FFE49F35CEF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04-OGL-RA-Texture", "rasterization\ogl\04-OGL-RA-Texture\04-OGL-RA-Texture.vcxproj", "{99EFE3D8-72A8-487F-BD57-F143877F7753}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -238,6 +240,14 @@ Global
 		{81F72E34-42C1-4C37-A904-9FFE49F35CEF}.Release|x64.Build.0 = Release|x64
 		{81F72E34-42C1-4C37-A904-9FFE49F35CEF}.Release|x86.ActiveCfg = Release|Win32
 		{81F72E34-42C1-4C37-A904-9FFE49F35CEF}.Release|x86.Build.0 = Release|Win32
+		{99EFE3D8-72A8-487F-BD57-F143877F7753}.Debug|x64.ActiveCfg = Debug|x64
+		{99EFE3D8-72A8-487F-BD57-F143877F7753}.Debug|x64.Build.0 = Debug|x64
+		{99EFE3D8-72A8-487F-BD57-F143877F7753}.Debug|x86.ActiveCfg = Debug|Win32
+		{99EFE3D8-72A8-487F-BD57-F143877F7753}.Debug|x86.Build.0 = Debug|Win32
+		{99EFE3D8-72A8-487F-BD57-F143877F7753}.Release|x64.ActiveCfg = Release|x64
+		{99EFE3D8-72A8-487F-BD57-F143877F7753}.Release|x64.Build.0 = Release|x64
+		{99EFE3D8-72A8-487F-BD57-F143877F7753}.Release|x86.ActiveCfg = Release|Win32
+		{99EFE3D8-72A8-487F-BD57-F143877F7753}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
