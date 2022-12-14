@@ -24,8 +24,14 @@ void ModelRenderer::render(const Mesh& mesh, Camera* camera) const {
 	
 	// update texture
 	for (size_t i = 0; i < mesh.textures.size(); ++i) {
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, mesh.textures[i].id);
+		// vao style
+		//glActiveTexture(GL_TEXTURE0 + i);
+		//glBindTexture(GL_TEXTURE_2D, mesh.textures[i].id);
+
+		// DSA style
+		// glBindTextureUnit = glActiveTexture + glBindTexture
+		glBindTextureUnit(i, mesh.textures[i].id);
+
 		glUniform1i(mesh.textures[i].location, i);
 	}
 
