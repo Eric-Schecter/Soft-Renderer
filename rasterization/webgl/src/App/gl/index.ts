@@ -42,4 +42,5 @@ export abstract class Application {
     cancelAnimationFrame(this.timer);
   }
   protected abstract update: (time: number) => void;
+  public setup = () => {};
 }

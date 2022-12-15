@@ -14,8 +14,6 @@ void ModelRenderer::render(int width, int height,const Mesh& mesh) const {
 	glUseProgram(mesh.program);
 	// set vertex data
 	glBindVertexArray(mesh.vao);
-	// update uniform
-	// 
 	// draw
 	glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
 	// reset	
