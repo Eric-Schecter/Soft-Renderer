@@ -24,7 +24,9 @@ public:
 	void setupModel(std::string path);
 	void setupProgram(std::string vertexPath,std::string fragmentPath);
 	void setupUniforms(Camera* camera, const Lights& lights);
+	void setupUniformTable(GLuint program, std::unordered_map<std::string, UniformInfo>& uniforms);
 	void updateUniformsBasic(Camera* camera, const Lights& lights) const;
+	void updateUniformsDSA(Camera* camera, const Lights& lights) const;
 
 	GLuint vao;
 

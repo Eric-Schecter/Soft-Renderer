@@ -140,22 +140,22 @@ void Mesh::setupModel(std::string path) {
 
 void Mesh::setupProgram(std::string VERTEX_SHADER_PATH, std::string FRAGMENT_SHADER_PATH) {
 	// program
-	ShaderInfo shaders[] = {
-	 {GL_VERTEX_SHADER,   VERTEX_SHADER_PATH.c_str()},
-	 {GL_FRAGMENT_SHADER, FRAGMENT_SHADER_PATH.c_str()},
-	 {GL_NONE,            nullptr}
-	};
-
-	program = LoadShaders(shaders);
-
-	// pipeline
-	//ShaderInfoPipeline shaders[] = {
-	// {GL_VERTEX_SHADER,   GL_VERTEX_SHADER_BIT, VERTEX_SHADER_PATH.c_str(), &vertProg},
-	// {GL_FRAGMENT_SHADER, GL_FRAGMENT_SHADER_BIT, FRAGMENT_SHADER_PATH.c_str(), &fragProg},
-	// {GL_NONE,            GL_NONE, nullptr, 0}
+	//ShaderInfo shaders[] = {
+	// {GL_VERTEX_SHADER,   VERTEX_SHADER_PATH.c_str()},
+	// {GL_FRAGMENT_SHADER, FRAGMENT_SHADER_PATH.c_str()},
+	// {GL_NONE,            nullptr}
 	//};
 
-	//pipeline = LoadShadersPipeline(shaders);
+	//program = LoadShaders(shaders);
+
+	// pipeline
+	ShaderInfoPipeline shaders[] = {
+	 {GL_VERTEX_SHADER,   GL_VERTEX_SHADER_BIT, VERTEX_SHADER_PATH.c_str(), &vertProg},
+	 {GL_FRAGMENT_SHADER, GL_FRAGMENT_SHADER_BIT, FRAGMENT_SHADER_PATH.c_str(), &fragProg},
+	 {GL_NONE,            GL_NONE, nullptr, 0}
+	};
+
+	pipeline = LoadShadersPipeline(shaders);
 }
 
 void Mesh::updateUniformsBasic(Camera* camera, const Lights& lights) const {
@@ -272,23 +272,133 @@ void Mesh::updateUniformsBasic(Camera* camera, const Lights& lights) const {
 	// update texture
 	for (size_t i = 0; i < textures.size(); ++i) {
 		// vao style
-		//glActiveTexture(GL_TEXTURE0 + i);
-		//glBindTexture(GL_TEXTURE_2D, mesh.textures[i].id);
-
-		// DSA style
-		// glBindTextureUnit = glActiveTexture + glBindTexture
-		glBindTextureUnit(i, textures[i].id);
-
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 		glUniform1i(textures[i].location, i);
 	}
 }
 
-void Mesh::setupUniforms(Camera* camera, const Lights& lights) {
-	// basic
-	for (size_t j = 0; j < textures.size(); ++j) {
-		textures[j].location = glGetUniformLocation(program, textures[j].name.c_str());
+void Mesh::updateUniformsDSA(Camera* camera, const Lights& lights) const {
+	auto uModelMatrix = uniformsVert.find("uModelMatrix");
+	if (uModelMatrix != uniformsVert.end()) {
+		glProgramUniformMatrix4fv(vertProg, uModelMatrix->second.location, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 	}
-	
+	auto uViewMatrix = uniformsVert.find("uViewMatrix");
+	if (uViewMatrix != uniformsVert.end()) {
+		glProgramUniformMatrix4fv(vertProg,uViewMatrix->second.location, 1, GL_FALSE, glm::value_ptr(camera->view));
+	}
+	auto uProjectionMatrix = uniformsVert.find("uProjectionMatrix");
+	if (uProjectionMatrix != uniformsVert.end()) {
+		glProgramUniformMatrix4fv(vertProg,uProjectionMatrix->second.location, 1, GL_FALSE, glm::value_ptr(camera->projection));
+	}
+	auto uNormalMatrix = uniformsVert.find("uNormalMatrix");
+	if (uNormalMatrix != uniformsVert.end()) {
+		auto normalMatrix = glm::transpose(glm::inverse(modelMatrix));
+		glProgramUniformMatrix4fv(vertProg,uNormalMatrix->second.location, 1, GL_FALSE, glm::value_ptr(normalMatrix));
+	}
+	auto specular = uniformsFrag.find("uMaterial.specular");
+	if (specular != uniformsFrag.end()) {
+		glProgramUniform1f(fragProg,specular->second.location, uMaterial.specular);
+	}
+	auto shininess = uniformsFrag.find("uMaterial.shininess");
+	if (shininess != uniformsFrag.end()) {
+		glProgramUniform1i(fragProg,shininess->second.location, uMaterial.shininess);
+	}
+	auto uCameraPos = uniformsFrag.find("uCameraPos");
+	if (uCameraPos != uniformsFrag.end()) {
+		glProgramUniform3fv(fragProg,uCameraPos->second.location, 1, glm::value_ptr(camera->pos));
+	}
+
+	for (int i = 0; i < lights.ambientLights.size(); ++i) {
+		auto uAmbientLightColor = uniformsFrag.find("uAmbientLight[" + std::to_string(i) + "].color");
+		if (uAmbientLightColor != uniformsFrag.end()) {
+			glProgramUniform4fv(fragProg,uAmbientLightColor->second.location, 1, glm::value_ptr(lights.ambientLights[i].color));
+		}
+		auto uAmbientLightIntensity = uniformsFrag.find("uAmbientLight[" + std::to_string(i) + "].intensity");
+		if (uAmbientLightIntensity != uniformsFrag.end()) {
+			glProgramUniform1f(fragProg,uAmbientLightIntensity->second.location, lights.ambientLights[i].intensity);
+		}
+	}
+
+	for (int i = 0; i < lights.directionalLights.size(); ++i) {
+		auto direction = uniformsFrag.find("uDirectionalLight[" + std::to_string(i) + "].direction");
+		if (direction != uniformsFrag.end()) {
+			glProgramUniform3fv(fragProg,direction->second.location, 1, glm::value_ptr(lights.directionalLights[i].direction));
+		}
+		auto color = uniformsFrag.find("uDirectionalLight[" + std::to_string(i) + "].color");
+		if (color != uniformsFrag.end()) {
+			glProgramUniform4fv(fragProg,color->second.location, 1, glm::value_ptr(lights.directionalLights[i].color));
+		}
+		auto intensity = uniformsFrag.find("uDirectionalLight[" + std::to_string(i) + "].intensity");
+		if (intensity != uniformsFrag.end()) {
+			glProgramUniform1f(fragProg,intensity->second.location, lights.directionalLights[i].intensity);
+		}
+	}
+
+	for (int i = 0; i < lights.spotLights.size(); ++i) {
+		auto pos = uniformsFrag.find("uSpotLight[" + std::to_string(i) + "].pos");
+		if (pos != uniformsFrag.end()) {
+			glProgramUniform3fv(fragProg,pos->second.location, 1, glm::value_ptr(lights.spotLights[i].pos));
+		}
+		auto direction = uniformsFrag.find("uSpotLight[" + std::to_string(i) + "].direction");
+		if (direction != uniformsFrag.end()) {
+			glProgramUniform3fv(fragProg,direction->second.location, 1, glm::value_ptr(lights.spotLights[i].direction));
+		}
+		auto cutOff = uniformsFrag.find("uSpotLight[" + std::to_string(i) + "].cutOff");
+		if (cutOff != uniformsFrag.end()) {
+			glProgramUniform1f(fragProg,cutOff->second.location, lights.spotLights[i].cutOff);
+		}
+		auto outerCutOff = uniformsFrag.find("uSpotLight[" + std::to_string(i) + "].outerCutOff");
+		if (outerCutOff != uniformsFrag.end()) {
+			glProgramUniform1f(fragProg,outerCutOff->second.location, lights.spotLights[i].outerCutOff);
+		}
+		auto color = uniformsFrag.find("uSpotLight[" + std::to_string(i) + "].color");
+		if (color != uniformsFrag.end()) {
+			glProgramUniform4fv(fragProg,color->second.location, 1, glm::value_ptr(lights.spotLights[i].color));
+		}
+		auto intensity = uniformsFrag.find("uSpotLight[" + std::to_string(i) + "].intensity");
+		if (intensity != uniformsFrag.end()) {
+			glProgramUniform1f(fragProg,intensity->second.location, lights.spotLights[i].intensity);
+		}
+	}
+
+	for (int i = 0; i < lights.pointLights.size(); ++i) {
+		auto pos = uniformsFrag.find("uPointLight[" + std::to_string(i) + "].pos");
+		if (pos != uniformsFrag.end()) {
+			glProgramUniform3fv(fragProg,pos->second.location, 1, glm::value_ptr(lights.pointLights[i].pos));
+		}
+		auto color = uniformsFrag.find("uPointLight[" + std::to_string(i) + "].color");
+		if (color != uniformsFrag.end()) {
+			glProgramUniform4fv(fragProg,color->second.location, 1, glm::value_ptr(lights.pointLights[i].color));
+		}
+		auto intensity = uniformsFrag.find("uPointLight[" + std::to_string(i) + "].intensity");
+		if (intensity != uniformsFrag.end()) {
+			glProgramUniform1f(fragProg,intensity->second.location, lights.pointLights[i].intensity);
+		}
+		auto constant = uniformsFrag.find("uPointLight[" + std::to_string(i) + "].constant");
+		if (constant != uniformsFrag.end()) {
+			glProgramUniform1f(fragProg,constant->second.location, lights.pointLights[i].constant);
+		}
+		auto linear = uniformsFrag.find("uPointLight[" + std::to_string(i) + "].linear");
+		if (linear != uniformsFrag.end()) {
+			glProgramUniform1f(fragProg,linear->second.location, lights.pointLights[i].linear);
+		}
+		auto quadratic = uniformsFrag.find("uPointLight[" + std::to_string(i) + "].quadratic");
+		if (quadratic != uniformsFrag.end()) {
+			glProgramUniform1f(fragProg,quadratic->second.location, lights.pointLights[i].quadratic);
+		}
+	}
+
+	// update texture
+	for (size_t i = 0; i < textures.size(); ++i) {
+		// DSA style
+		// glBindTextureUnit = glActiveTexture + glBindTexture
+		glBindTextureUnit(i, textures[i].id);
+		glProgramUniform1i(fragProg,textures[i].location, i);
+	}
+}
+
+void Mesh::setupUniformTable(GLuint program, std::unordered_map<std::string, UniformInfo>& uniforms) {
 	GLint uniform_count = 0;
 	glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniform_count);
 
@@ -311,66 +421,32 @@ void Mesh::setupUniforms(Camera* camera, const Lights& lights) {
 			uniforms.emplace(std::make_pair(std::string(uniform_name.get(), length), uniform_info));
 		}
 	}
-	glUseProgram(program);
-	updateUniformsBasic(camera, lights);
-	glUseProgram(0);
+}
 
-	// spread program
+void Mesh::setupUniforms(Camera* camera, const Lights& lights) {
+	// basic
 	//for (size_t j = 0; j < textures.size(); ++j) {
 	//	textures[j].location = glGetUniformLocation(program, textures[j].name.c_str());
 	//}
+	//setupUniformTable(program, uniforms);
+	//glUseProgram(program);
+	//updateUniformsBasic(camera, lights);
+	//glUseProgram(0);
 
-	//GLint uniform_count = 0;
-	//glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniform_count);
+	// DSA style
+	for (size_t j = 0; j < textures.size(); ++j) {
+		textures[j].location = glGetUniformLocation(vertProg, textures[j].name.c_str());
+		if (textures[j].location == -1) {
+			textures[j].location = glGetUniformLocation(fragProg, textures[j].name.c_str());
+		}
+	}
 
-	//if (uniform_count != 0) {
-	//	GLint 	max_name_len = 0;
-	//	glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_len);
-	//	auto uniform_name = std::make_unique<char[]>(max_name_len);
-
-	//	GLsizei length = 0;
-	//	GLsizei count = 0;
-	//	GLenum 	type = GL_NONE;
-	//	for (GLint i = 0; i < uniform_count; ++i)
-	//	{
-	//		glGetActiveUniform(program, i, max_name_len, &length, &count, &type, uniform_name.get());
-
-	//		UniformInfo uniform_info = {};
-	//		uniform_info.location = glGetUniformLocation(program, uniform_name.get());
-	//		uniform_info.count = count;
-
-	//		uniforms.emplace(std::make_pair(std::string(uniform_name.get(), length), uniform_info));
-	//	}
-	//}
-
-	//GLint uniform_count = 0;
-	//glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniform_count);
-
-	//if (uniform_count != 0) {
-	//	GLint 	max_name_len = 0;
-	//	glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_len);
-	//	auto uniform_name = std::make_unique<char[]>(max_name_len);
-
-	//	GLsizei length = 0;
-	//	GLsizei count = 0;
-	//	GLenum 	type = GL_NONE;
-	//	for (GLint i = 0; i < uniform_count; ++i)
-	//	{
-	//		glGetActiveUniform(program, i, max_name_len, &length, &count, &type, uniform_name.get());
-
-	//		UniformInfo uniform_info = {};
-	//		uniform_info.location = glGetUniformLocation(program, uniform_name.get());
-	//		uniform_info.count = count;
-
-	//		uniforms.emplace(std::make_pair(std::string(uniform_name.get(), length), uniform_info));
-	//	}
-	//}
-
-	//glProgramUniformMatrix4fv(vertProg, uModelMatrix, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-	//glProgramUniformMatrix4fv(vertProg, uViewMatrix, 1, GL_FALSE, glm::value_ptr(camera->view));
-	//glProgramUniformMatrix4fv(vertProg, uProjectionMatrix, 1, GL_FALSE, glm::value_ptr(camera->projection));
+	setupUniformTable(vertProg, uniformsVert);
+	setupUniformTable(fragProg, uniformsFrag);
+	updateUniformsDSA(camera,lights);
 
 	//// ubo style
+	//// UBO can not use DSA style
 	//GLuint uniformBlockIndex = glGetUniformBlockIndex(vertProg, "UniformBufferObject");
 	//glUniformBlockBinding(vertProg, uniformBlockIndex, 0);
 

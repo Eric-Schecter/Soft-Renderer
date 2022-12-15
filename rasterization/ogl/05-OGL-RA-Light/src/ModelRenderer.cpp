@@ -19,18 +19,8 @@ void ModelRenderer::render(const Mesh& mesh, Camera* camera, const Lights& light
 	// uniform belongs to program, so update uniform only when needed
 	// texture contains two parts, uniform and texture data, update when needed
 	
-	// bind program
-	glUseProgram(mesh.program);
-	// set vertex data
-	glBindVertexArray(mesh.vao);
-	// draw
-	glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
-	// reset	
-	glBindVertexArray(0);
-	glUseProgram(0);
-
-	//// bind pipeline
-	//glBindProgramPipeline(mesh.pipeline);
+	//// bind program
+	//glUseProgram(mesh.program);
 	//// set vertex data
 	//glBindVertexArray(mesh.vao);
 	//// draw
@@ -38,4 +28,14 @@ void ModelRenderer::render(const Mesh& mesh, Camera* camera, const Lights& light
 	//// reset	
 	//glBindVertexArray(0);
 	//glUseProgram(0);
+
+	// bind pipeline
+	glBindProgramPipeline(mesh.pipeline);
+	// set vertex data
+	glBindVertexArray(mesh.vao);
+	// draw
+	glDrawElements(GL_TRIANGLES, mesh.indices.size(), GL_UNSIGNED_INT, 0);
+	// reset	
+	glBindVertexArray(0);
+	glUseProgram(0);
 }
