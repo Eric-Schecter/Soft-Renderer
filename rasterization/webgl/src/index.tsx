@@ -4,13 +4,15 @@ import './index.module.scss';
 import * as serviceWorker from './serviceWorker';
 import { App } from './App';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import { Triangle } from './App/triangle';
-import { SimpleModel } from './App/simplemodel';
+import { Triangle } from './App/01-WGL-RA-Triangle';
+import { SimpleModel } from './App/02-WGL-RA-SimpleModel';
+import { CameraDemo } from './App/03-WGL-RA-Camera';
 
 const routes = [
   { path: '/', app: Triangle },
   { path: '/triangle', app: Triangle },
   { path: '/simplemodel', app: SimpleModel },
+  { path: '/camera', app: CameraDemo },
 ]
 
 ReactDOM.render(
