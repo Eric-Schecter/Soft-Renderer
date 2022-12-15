@@ -43,11 +43,6 @@ public:
 	glm::mat4 modelMatrix = glm::mat4(1.f);
 
 	// unidforms
-	GLint uModelMatrix;
-	GLint uViewMatrix;
-	GLint uProjectionMatrix;
-	GLint uNormalMatrix;
-
 	std::unordered_map<std::string, UniformInfo> uniforms;
 
 	std::unordered_map<std::string, UniformInfo> uniformsVert;
