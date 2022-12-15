@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Material.h"
+#include "Lights.h"
 
 struct UniformInfo
 {
@@ -22,7 +23,8 @@ class Mesh
 public:
 	void setupModel(std::string path);
 	void setupProgram(std::string vertexPath,std::string fragmentPath);
-	void setupUniforms(Camera* camera);
+	void setupUniforms(Camera* camera, const Lights& lights);
+	void updateUniformsBasic(Camera* camera, const Lights& lights) const;
 
 	GLuint vao;
 
@@ -45,6 +47,9 @@ public:
 	GLint uNormalMatrix;
 
 	std::unordered_map<std::string, UniformInfo> uniforms;
+
+	std::unordered_map<std::string, UniformInfo> uniformsVert;
+	std::unordered_map<std::string, UniformInfo> uniformsFrag;
 
 	// textures
 	std::vector<Texture> textures;

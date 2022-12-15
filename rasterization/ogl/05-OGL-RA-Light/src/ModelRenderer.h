@@ -9,8 +9,5 @@ class ModelRenderer : public Renderer
 {
 public:
 	void render(const Mesh& mesh, Camera* camera, const Lights& lights) const override;
-
-private:
-	void updateUniformsBasic(const Mesh& mesh, Camera* camera, const Lights& lights) const;
 };
 

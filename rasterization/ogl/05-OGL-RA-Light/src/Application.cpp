@@ -43,19 +43,6 @@ void Application::initScene() {
 		->setView(glm::vec3(0.f, 0.f, 0.f))
 		->setProjection(fov, aspect, near, far)
 		->setViewport(0, 0, window->width, window->height);
-
-	// load mesh
-	const std::string MODEL_PATH = "./models/african_head/african_head.obj";
-	const std::string VERTEX_SHADER_PATH = "./shaders/triangle.vert";
-	const std::string FRAGMENT_SHADER_PATH = "./shaders/triangle.frag";
-	Mesh mesh;
-	mesh.setupModel(MODEL_PATH);
-	mesh.setupProgram(
-		VERTEX_SHADER_PATH,
-		FRAGMENT_SHADER_PATH
-	);
-	mesh.setupUniforms(camera);
-	scene.push_back(mesh);
 	
 	// load lights
 	SpotLight spotLight{
@@ -91,6 +78,21 @@ void Application::initScene() {
 	};
 
 	lights.ambientLights.push_back(ambientLight);
+
+	// load mesh
+	const std::string MODEL_PATH = "./models/african_head/african_head.obj";
+	const std::string VERTEX_SHADER_PATH = "./shaders/triangle.vert";
+	const std::string FRAGMENT_SHADER_PATH = "./shaders/triangle.frag";
+	Mesh mesh;
+	mesh.setupModel(MODEL_PATH);
+	mesh.uMaterial.shininess = 16;
+	mesh.uMaterial.specular = 1.f;
+	mesh.setupProgram(
+		VERTEX_SHADER_PATH,
+		FRAGMENT_SHADER_PATH
+	);
+	mesh.setupUniforms(camera, lights);
+	scene.push_back(mesh);
 }
 
 void Application::run() {
