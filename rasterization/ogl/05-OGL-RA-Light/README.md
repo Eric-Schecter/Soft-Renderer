@@ -1,1 +1,1 @@
-![Texture](./profiles/texture.png)  
+![Light](./profiles/light.png)  
