@@ -7,12 +7,14 @@ import { HashRouter, Route, Switch } from 'react-router-dom';
 import { Triangle } from './App/01-WGL-RA-Triangle';
 import { SimpleModel } from './App/02-WGL-RA-SimpleModel';
 import { CameraDemo } from './App/03-WGL-RA-Camera';
+import { Texture } from './App/04-WGL-RA-Texture';
 
 const routes = [
   { path: '/', app: Triangle },
   { path: '/triangle', app: Triangle },
   { path: '/simplemodel', app: SimpleModel },
   { path: '/camera', app: CameraDemo },
+  { path: '/texture', app: Texture },
 ]
 
 ReactDOM.render(
