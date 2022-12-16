@@ -5,7 +5,7 @@ import { Mesh } from "./mesh";
 import { Camera } from "./camera";
 import { vec3 } from "gl-matrix";
 
-export class Texture extends Application {
+export class TextureDemo extends Application {
   private mesh: Mesh;
   private camera: Camera;
   constructor(container: HTMLDivElement) {

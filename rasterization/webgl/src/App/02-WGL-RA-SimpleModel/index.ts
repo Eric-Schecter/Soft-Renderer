@@ -3,7 +3,7 @@ import vs from './shader/triangle.vs';
 import fs from './shader/triangle.fs';
 import { Mesh } from "./mesh";
 
-export class SimpleModel extends Application {
+export class SimpleModelDemo extends Application {
   private program: WebGLProgram;
   private mesh: Mesh;
   constructor(container: HTMLDivElement) {

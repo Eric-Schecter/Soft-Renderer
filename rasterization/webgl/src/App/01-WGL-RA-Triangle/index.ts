@@ -2,7 +2,7 @@ import { Application } from "../gl";
 import vs from './shader/triangle.vs';
 import fs from './shader/triangle.fs';
 
-export class Triangle extends Application {
+export class TriangleDemo extends Application {
   private vao: WebGLVertexArrayObject;
   private program: WebGLProgram;
   private vertices = [
