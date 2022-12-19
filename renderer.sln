@@ -58,6 +58,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04-OGL-RA-Texture", "raster
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05-OGL-RA-Light", "rasterization\ogl\05-OGL-RA-Light\05-OGL-RA-Light.vcxproj", "{7C5CEC27-637F-4054-80B6-ADB4B687EBC0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01-VK-RA-Triangle", "rasterization\vk\01-VK-RA-Triangle\01-VK-RA-Triangle.vcxproj", "{532C44BF-C220-4C59-8B02-26A2CB43C519}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -258,6 +260,14 @@ Global
 		{7C5CEC27-637F-4054-80B6-ADB4B687EBC0}.Release|x64.Build.0 = Release|x64
 		{7C5CEC27-637F-4054-80B6-ADB4B687EBC0}.Release|x86.ActiveCfg = Release|Win32
 		{7C5CEC27-637F-4054-80B6-ADB4B687EBC0}.Release|x86.Build.0 = Release|Win32
+		{532C44BF-C220-4C59-8B02-26A2CB43C519}.Debug|x64.ActiveCfg = Debug|x64
+		{532C44BF-C220-4C59-8B02-26A2CB43C519}.Debug|x64.Build.0 = Debug|x64
+		{532C44BF-C220-4C59-8B02-26A2CB43C519}.Debug|x86.ActiveCfg = Debug|Win32
+		{532C44BF-C220-4C59-8B02-26A2CB43C519}.Debug|x86.Build.0 = Debug|Win32
+		{532C44BF-C220-4C59-8B02-26A2CB43C519}.Release|x64.ActiveCfg = Release|x64
+		{532C44BF-C220-4C59-8B02-26A2CB43C519}.Release|x64.Build.0 = Release|x64
+		{532C44BF-C220-4C59-8B02-26A2CB43C519}.Release|x86.ActiveCfg = Release|Win32
+		{532C44BF-C220-4C59-8B02-26A2CB43C519}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
