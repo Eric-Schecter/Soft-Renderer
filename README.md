@@ -1,5 +1,5 @@
 ## About The Project
-A soft renderer written in c++.
+Implementations of Renderer.  
 
 ## Renderer Samples
 #### Triangle
