@@ -2,6 +2,11 @@
 
 #include <iostream>
 
+static void callback(GLFWwindow* window, int width, int height) {
+	auto app = reinterpret_cast<Renderer*>(glfwGetWindowUserPointer(window));
+	app->framebufferResized = true;
+}
+
 Window::Window(int x, int y, int _width, int _height) {
 	glfwInit();
 
@@ -18,8 +23,9 @@ Window::Window(int x, int y, int _width, int _height) {
 	}
 
 	window = glfwCreateWindow(width, height, "Renderer", nullptr, nullptr);
-	glfwMakeContextCurrent(window);
 	glfwMaximizeWindow(window);
+	glfwSetWindowUserPointer(window, this);
+	glfwSetFramebufferSizeCallback(window, callback);
 }
 
 Window::~Window() {

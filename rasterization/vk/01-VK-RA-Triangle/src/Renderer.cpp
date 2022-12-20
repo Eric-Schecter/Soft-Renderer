@@ -26,6 +26,8 @@ Renderer::Renderer(GLFWwindow* _window):window(_window) {
 Renderer::~Renderer() {
 	// UniqueInstance destory instance, device and queue
 
+	cleanupSwapChain();
+
 	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 		device->destroySemaphore(renderFinishedSemaphores[i]);
 		device->destroySemaphore(imageAvailableSemaphores[i]);
@@ -33,20 +35,6 @@ Renderer::~Renderer() {
 	}
 
 	device->destroyCommandPool(commandPool);
-
-	for (auto framebuffer : swapChainFramebuffers) {
-		device->destroyFramebuffer(framebuffer);
-	}
-
-	device->destroyPipeline(graphicsPipeline);
-	device->destroyPipelineLayout(pipelineLayout);
-	device->destroyRenderPass(renderPass);
-
-	for (auto imageView : swapChainImageViews) {
-		device->destroyImageView(imageView);
-	}
-
-	device->destroySwapchainKHR(swapChain);
 
 	instance->destroySurfaceKHR(surface);
 
@@ -750,16 +738,29 @@ void Renderer::render() {
 	// the present queue will wait for graphics queue by the help of ssemaphores
 	// wait for last frame
 	device->waitForFences(1, &inFlightFences[currentFrame], VK_TRUE, (std::numeric_limits<uint64_t>::max)());
-	// reset fence
-	device->resetFences(1, &inFlightFences[currentFrame]);
 	
 	// get image to render
-	uint32_t imageIndex = device->acquireNextImageKHR(
-		swapChain, 
-		(std::numeric_limits<uint64_t>::max)(),
-		imageAvailableSemaphores[currentFrame],  // singal to send when used
-		nullptr
-	).value;
+	// swap chain may not be suitable
+	uint32_t imageIndex;
+	try {
+		vk::ResultValue result = device->acquireNextImageKHR(
+			swapChain, 
+			(std::numeric_limits<uint64_t>::max)(),
+			imageAvailableSemaphores[currentFrame],
+			nullptr
+		);
+		imageIndex = result.value;
+	}
+	catch (vk::OutOfDateKHRError err) { // swap chain size is different from window size
+		recreateSwapChain();
+		return;
+	}
+	catch (vk::SystemError err) {
+		throw std::runtime_error("failed to acquire swap chain image!");
+	}
+
+	// reset fence, after ensure swap chain is suitable
+	device->resetFences(1, &inFlightFences[currentFrame]);
 	
 	// submit graphic queue
 	vk::SubmitInfo submitInfo = {};
@@ -795,10 +796,64 @@ void Renderer::render() {
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.pResults = nullptr; // Optional
 	
-	presentQueue.presentKHR(presentInfo);
+	vk::Result resultPresent;
+	try {
+		resultPresent = presentQueue.presentKHR(presentInfo);
+	}
+	catch (vk::OutOfDateKHRError err) {
+		resultPresent = vk::Result::eErrorOutOfDateKHR;
+	}
+	catch (vk::SystemError err) {
+		throw std::runtime_error("failed to present swap chain image!");
+	}
+
+	if (resultPresent == vk::Result::eSuboptimalKHR || framebufferResized) {
+		std::cout << "swap chain out of date/suboptimal/window resized - recreating" << std::endl;
+		framebufferResized = false;
+		recreateSwapChain();
+		return;
+	}
 	
 	// update frame index
 	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+}
+
+void Renderer::cleanupSwapChain() {
+	for (auto framebuffer : swapChainFramebuffers) {
+		device->destroyFramebuffer(framebuffer);
+	}
+
+	device->freeCommandBuffers(commandPool, commandBuffers);
+
+	device->destroyPipeline(graphicsPipeline);
+	device->destroyPipelineLayout(pipelineLayout);
+	device->destroyRenderPass(renderPass);
+
+	for (auto imageView : swapChainImageViews) {
+		device->destroyImageView(imageView);
+	}
+
+	device->destroySwapchainKHR(swapChain);
+}
+
+void Renderer::recreateSwapChain() {
+	int width = 0, height = 0;
+	while (width == 0 || height == 0) {
+		glfwGetFramebufferSize(window, &width, &height);
+		glfwWaitEvents();
+	}
+
+	device->waitIdle();
+
+	cleanupSwapChain();
+
+	// after logical device, command pool and sync objects donot need to recreate
+	createSwapChain();
+	createImageViews();
+	createRenderPass();
+	createGraphicsPipeline();
+	createFramebuffers();
+	createCommandBuffers();
 }
 
 void Renderer::waitIdle() const {

@@ -35,6 +35,9 @@ public:
 	void render();
 	void waitIdle() const;
 
+	// set resize mark for the case of aquiring next image may not work
+	bool framebufferResized = false;
+
 private:
 	#ifdef NDEBUG
 		const bool enableValidationLayers = false;
@@ -181,4 +184,9 @@ private:
 	const int MAX_FRAMES_IN_FLIGHT = 2;
 	size_t currentFrame = 0;
 	void createSyncObjects();
+
+	// 12. recreate swapchain
+	// need to be recreated when window size change
+	void cleanupSwapChain();
+	void recreateSwapChain();
 };
