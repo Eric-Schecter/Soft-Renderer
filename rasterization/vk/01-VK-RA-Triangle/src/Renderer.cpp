@@ -70,31 +70,26 @@ void Renderer::createInstance() {
 	}
 
 	// setup app info
-	auto appInfo = vk::ApplicationInfo(
+	vk::ApplicationInfo appInfo = {
 		"Renderer",
 		VK_MAKE_VERSION(1,0,0),
 		"No Engine",
 		VK_MAKE_VERSION(1,0,0),
 		VK_API_VERSION_1_0
-	);
+	};
 
 	// get extensions
 	auto extensions = getRequiredExtensions();
 
 	// setup createinfo
-	auto createInfo = vk::InstanceCreateInfo(
+	std::vector<const char*> emptyVector{};
+
+	vk::InstanceCreateInfo createInfo = {
 		vk::InstanceCreateFlags(),
 		&appInfo,
-		0,		 // enabledLayerCount
-		nullptr, // enalbedLayerNames
-		static_cast<uint32_t>(extensions.size()),
-		extensions.data()
-	);
-
-	if (enableValidationLayers) {
-		createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-		createInfo.ppEnabledLayerNames = validationLayers.data();
-	}
+		enableValidationLayers ? validationLayers : emptyVector,
+		extensions
+	};
 
 	// create instance
 	try
@@ -247,23 +242,18 @@ void Renderer::createLogicalDevice() {
 	}
 
 	// specify device feature 
-	auto deviceFeatures = vk::PhysicalDeviceFeatures();
+	vk::PhysicalDeviceFeatures deviceFeatures = {};
 
 	// specify create info
-	auto createInfo = vk::DeviceCreateInfo(
+	std::vector<const char*> emptyVector;
+
+	vk::DeviceCreateInfo createInfo = {
 		vk::DeviceCreateFlags(),
-		static_cast<uint32_t>(queueCreateInfos.size()),
-		queueCreateInfos.data()
-	);
-
-	createInfo.pEnabledFeatures = &deviceFeatures;
-	createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
-	createInfo.ppEnabledExtensionNames = deviceExtensions.data();
-
-	if (enableValidationLayers) {
-		createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-		createInfo.ppEnabledLayerNames = validationLayers.data();
-	}
+		queueCreateInfos,
+		validationLayers,
+		deviceExtensions,
+		&deviceFeatures
+	};
 
 	try {
 		device = physicalDevice.createDeviceUnique(createInfo);
@@ -294,10 +284,11 @@ bool Renderer::checkDeviceExtensionSupport(vk::PhysicalDevice device) {
 }
 
 SwapChainSupportDetails Renderer::querySwapChainSupport(const vk::PhysicalDevice& device) {
-	SwapChainSupportDetails details;
-	details.capabilities = device.getSurfaceCapabilitiesKHR(surface);
-	details.formats = device.getSurfaceFormatsKHR(surface);
-	details.presentModes = device.getSurfacePresentModesKHR(surface);
+	SwapChainSupportDetails details = {
+		device.getSurfaceCapabilitiesKHR(surface),
+		device.getSurfaceFormatsKHR(surface),
+		device.getSurfacePresentModesKHR(surface)
+	};
 	return details;
 }
 
@@ -361,34 +352,31 @@ void Renderer::createSwapChain() {
 		imageCount = swapChainSupport.capabilities.maxImageCount;
 	}
 
-	vk::SwapchainCreateInfoKHR createInfo(
+	QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+	uint32_t queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentFamily.value() };
+	bool isDifferentQueue = indices.graphicsFamily != indices.presentFamily;
+
+	vk::SwapchainCreateInfoKHR createInfo = {
 		vk::SwapchainCreateFlagsKHR(),
 		surface,
 		imageCount,
 		surfaceFormat.format,
 		surfaceFormat.colorSpace,
 		extent,
-		1, // imageArrayLayers
-		vk::ImageUsageFlagBits::eColorAttachment 
-	);
+		1,			// imageArrayLayers
+		vk::ImageUsageFlagBits::eColorAttachment,
+		isDifferentQueue ? vk::SharingMode::eConcurrent : vk::SharingMode::eExclusive,
+		queueFamilyIndices,
+		swapChainSupport.capabilities.currentTransform, // rotation of image
+		vk::CompositeAlphaFlagBitsKHR::eOpaque,
+		presentMode,
+		VK_TRUE,
+		vk::SwapchainKHR(nullptr)
+	};
 
-	QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
-	uint32_t queueFamilyIndices[] = { indices.graphicsFamily.value(), indices.presentFamily.value() };
-
-	if (indices.graphicsFamily != indices.presentFamily) {
-		createInfo.imageSharingMode = vk::SharingMode::eConcurrent;
-		createInfo.queueFamilyIndexCount = 2;
-		createInfo.pQueueFamilyIndices = queueFamilyIndices;
+	if (!enableValidationLayers) {
+		createInfo.pQueueFamilyIndices = nullptr;
 	}
-	else {
-		createInfo.imageSharingMode = vk::SharingMode::eExclusive;
-	}
-
-	createInfo.preTransform = swapChainSupport.capabilities.currentTransform; // rotation of image
-	createInfo.compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque;
-	createInfo.presentMode = presentMode;
-	createInfo.clipped = VK_TRUE;
-	createInfo.oldSwapchain = vk::SwapchainKHR(nullptr);
 
 	try {
 		swapChain = device->createSwapchainKHR(createInfo);
@@ -406,20 +394,27 @@ void Renderer::createImageViews() {
 	swapChainImageViews.resize(swapChainImages.size());
 
 	for (size_t i = 0; i < swapChainImages.size(); ++i) {
-		vk::ImageViewCreateInfo createInfo = {};
-		createInfo.image = swapChainImages[i];
-		createInfo.viewType = vk::ImageViewType::e2D; // 1D/2D/3D/cube/array
-		createInfo.format = swapChainImageFormat;
-		createInfo.components.r = vk::ComponentSwizzle::eIdentity;
-		createInfo.components.g = vk::ComponentSwizzle::eIdentity;
-		createInfo.components.b = vk::ComponentSwizzle::eIdentity;
-		createInfo.components.a = vk::ComponentSwizzle::eIdentity;
-		// subresource use for mipmap
-		createInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
-		createInfo.subresourceRange.baseMipLevel = 0;
-		createInfo.subresourceRange.levelCount = 1;
-		createInfo.subresourceRange.baseArrayLayer = 0;
-		createInfo.subresourceRange.layerCount = 1;
+		vk::ComponentMapping mapping = {
+			vk::ComponentSwizzle::eIdentity,
+			vk::ComponentSwizzle::eIdentity,
+			vk::ComponentSwizzle::eIdentity,
+			vk::ComponentSwizzle::eIdentity
+		};
+		vk::ImageSubresourceRange subresourceRange = {
+			vk::ImageAspectFlagBits::eColor,
+			0,		// baseMipLevel
+			1,		// levelCount
+			0,		// baseArrayLayer
+			1		// layerCount
+		};
+		vk::ImageViewCreateInfo createInfo = {
+			vk::ImageViewCreateFlags(),
+			swapChainImages[i],
+			vk::ImageViewType::e2D, // 1D/2D/3D/cube/array
+			swapChainImageFormat,
+			mapping,
+			subresourceRange
+		};
 
 		try {
 			swapChainImageViews[i] = device->createImageView(createInfo);
@@ -461,42 +456,50 @@ vk::UniqueShaderModule Renderer::createShaderModule(const std::vector<char>& cod
 }
 
 void Renderer::createRenderPass() {
-	vk::AttachmentDescription colorAttachment = {};
-	colorAttachment.format = swapChainImageFormat;
-	colorAttachment.samples = vk::SampleCountFlagBits::e1;
-	colorAttachment.loadOp = vk::AttachmentLoadOp::eClear;
-	colorAttachment.storeOp = vk::AttachmentStoreOp::eStore;
-	colorAttachment.stencilLoadOp = vk::AttachmentLoadOp::eDontCare;
-	colorAttachment.stencilStoreOp = vk::AttachmentStoreOp::eDontCare;
-	colorAttachment.initialLayout = vk::ImageLayout::eUndefined;
-	colorAttachment.finalLayout = vk::ImageLayout::ePresentSrcKHR;
+	vk::AttachmentDescription colorAttachment = {
+		vk::AttachmentDescriptionFlags(),
+		swapChainImageFormat,
+		vk::SampleCountFlagBits::e1,
+		vk::AttachmentLoadOp::eClear,
+		vk::AttachmentStoreOp::eStore,
+		vk::AttachmentLoadOp::eDontCare,
+		vk::AttachmentStoreOp::eDontCare,
+		vk::ImageLayout::eUndefined,
+		vk::ImageLayout::ePresentSrcKHR
+	};
 
-	vk::AttachmentReference colorAttachmentRef = {};
-	colorAttachmentRef.attachment = 0;
-	colorAttachmentRef.layout = vk::ImageLayout::eColorAttachmentOptimal;
+	vk::AttachmentReference colorAttachmentRef = {
+		0,
+		vk::ImageLayout::eColorAttachmentOptimal
+	};
 
-	vk::SubpassDescription subpass = {};
-	subpass.pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
-	subpass.colorAttachmentCount = 1;
-	subpass.pColorAttachments = &colorAttachmentRef;
+	vk::SubpassDescription subpass = {
+		vk::SubpassDescriptionFlags(),
+		vk::PipelineBindPoint::eGraphics,
+		nullptr,			// input attachments
+		colorAttachmentRef,
+		nullptr,			// resolve attachments
+		nullptr,			// depth stencil attachments
+		nullptr				// presesrve attachments
+	};
 
 	// create in draw call setion
-	vk::SubpassDependency dependency = {};
-	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-	dependency.dstSubpass = 0;
-	dependency.srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
-	//dependency.srcAccessMask = 0;
-	dependency.dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
-	dependency.dstAccessMask = vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite;
+	vk::SubpassDependency dependency = {
+		VK_SUBPASS_EXTERNAL,								 // srcSubpass;
+		0,													 // dstSubpass;
+		vk::PipelineStageFlagBits::eColorAttachmentOutput,   // srcStageMask;
+		vk::PipelineStageFlagBits::eColorAttachmentOutput,	 // dstStageMask;
+		{},										             // srcAccessMask;
+		vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite,   // dstAccessMask;
+		vk::DependencyFlags()								 // dependencyFlags;
+	};
 
-	vk::RenderPassCreateInfo renderPassInfo = {};
-	renderPassInfo.attachmentCount = 1;
-	renderPassInfo.pAttachments = &colorAttachment;
-	renderPassInfo.subpassCount = 1;
-	renderPassInfo.pSubpasses = &subpass;
-	// create in draw call setion
-	renderPassInfo.dependencyCount = 1;
-	renderPassInfo.pDependencies = &dependency;
+	vk::RenderPassCreateInfo renderPassInfo = {
+		vk::RenderPassCreateFlags(),
+		colorAttachment,
+		subpass,
+		dependency
+	};
 
 	try {
 		renderPass = device->createRenderPass(renderPassInfo);
@@ -530,9 +533,11 @@ void Renderer::createGraphicsPipeline() {
 	};
 
 	// pipeline layout
-	vk::PipelineLayoutCreateInfo pipelineLayoutInfo = {};
-	pipelineLayoutInfo.setLayoutCount = 0;
-	pipelineLayoutInfo.pushConstantRangeCount = 0;
+	vk::PipelineLayoutCreateInfo pipelineLayoutInfo = {
+		vk::PipelineLayoutCreateFlags(),
+		0,		// setLayoutCount
+		0		// pushConstantRangeCount
+	};
 
 	try {
 		pipelineLayout = device->createPipelineLayout(pipelineLayoutInfo);
@@ -542,13 +547,17 @@ void Renderer::createGraphicsPipeline() {
 	}
 
 
-	vk::PipelineVertexInputStateCreateInfo vertexInputInfo = {};
-	vertexInputInfo.vertexBindingDescriptionCount = 0;
-	vertexInputInfo.vertexAttributeDescriptionCount = 0;
+	vk::PipelineVertexInputStateCreateInfo vertexInputInfo = {
+		vk::PipelineVertexInputStateCreateFlags(),
+		0,		// vertexBindingDescriptionCount
+		0		// vertexAttributeDescriptionCount
+	};
 
-	vk::PipelineInputAssemblyStateCreateInfo inputAssembly = {};
-	inputAssembly.topology = vk::PrimitiveTopology::eTriangleList;
-	inputAssembly.primitiveRestartEnable = VK_FALSE;
+	vk::PipelineInputAssemblyStateCreateInfo inputAssembly = {
+		vk::PipelineInputAssemblyStateCreateFlags(),
+		vk::PrimitiveTopology::eTriangleList,
+		VK_FALSE		// primitiveRestartEnable
+	};
 
 	vk::Viewport viewport = {
 		0,											// x
@@ -564,53 +573,71 @@ void Renderer::createGraphicsPipeline() {
 		swapChainExtent
 	};
 
-	vk::PipelineViewportStateCreateInfo viewportState = {};
-	viewportState.viewportCount = 1;
-	viewportState.pViewports = &viewport;
-	viewportState.scissorCount = 1;
-	viewportState.pScissors = &scissor;
+	vk::PipelineViewportStateCreateInfo viewportState = {
+		vk::PipelineViewportStateCreateFlags(),
+		viewport,
+		scissor
+	};
 
-	vk::PipelineRasterizationStateCreateInfo rasterizer = {};
-	rasterizer.depthClampEnable = VK_FALSE;
-	rasterizer.rasterizerDiscardEnable = VK_FALSE;
-	rasterizer.polygonMode = vk::PolygonMode::eFill;
-	rasterizer.lineWidth = 1.0f;
-	rasterizer.cullMode = vk::CullModeFlagBits::eBack;
-	rasterizer.frontFace = vk::FrontFace::eClockwise;
-	rasterizer.depthBiasEnable = VK_FALSE;
+	vk::PipelineRasterizationStateCreateInfo rasterizer = {
+		vk::PipelineRasterizationStateCreateFlags(),
+		VK_FALSE,		// depthClampEnable
+		VK_FALSE,		// rasterizerDiscardEnable
+		vk::PolygonMode::eFill,
+		vk::CullModeFlagBits::eBack,
+		vk::FrontFace::eClockwise,
+		VK_FALSE,		// depthBiasEnable
+		0.f,			// depthBiasConstantFactor
+		0.f,			// depthBiasClamp
+		0.f,			// depthBiasSlopeFactor
+		1.f				// lineWidth
+	};
 
-	vk::PipelineMultisampleStateCreateInfo multisampling = {};
-	multisampling.sampleShadingEnable = VK_FALSE;
-	multisampling.rasterizationSamples = vk::SampleCountFlagBits::e1;
+	vk::PipelineMultisampleStateCreateInfo multisampling = {
+		vk::PipelineMultisampleStateCreateFlags(),
+		vk::SampleCountFlagBits::e1,
+		VK_FALSE
+	};
 
-	vk::PipelineColorBlendAttachmentState colorBlendAttachment = {};
+	vk::PipelineColorBlendAttachmentState colorBlendAttachment = {
+		VK_FALSE,
+		vk::BlendFactor::eZero,    // srcColorBlendFactor;
+		vk::BlendFactor::eZero,            // dstColorBlendFactor;
+		vk::BlendOp::eAdd,                // colorBlendOp;
+		vk::BlendFactor::eZero,            // srcAlphaBlendFactor;
+		vk::BlendFactor::eZero,            // dstAlphaBlendFactor;
+		vk::BlendOp::eAdd,                 // alphaBlendOp;
+		vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA,
+	};
 	colorBlendAttachment.colorWriteMask = vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA;
 	colorBlendAttachment.blendEnable = VK_FALSE;
 
-	vk::PipelineColorBlendStateCreateInfo colorBlending = {};
-	colorBlending.logicOpEnable = VK_FALSE;
-	colorBlending.logicOp = vk::LogicOp::eCopy;
-	colorBlending.attachmentCount = 1;
-	colorBlending.pAttachments = &colorBlendAttachment;
-	colorBlending.blendConstants[0] = 0.0f;
-	colorBlending.blendConstants[1] = 0.0f;
-	colorBlending.blendConstants[2] = 0.0f;
-	colorBlending.blendConstants[3] = 0.0f;
+	vk::PipelineColorBlendStateCreateInfo colorBlending = {
+		vk::PipelineColorBlendStateCreateFlags(),
+		VK_FALSE,
+		vk::LogicOp::eCopy,
+		colorBlendAttachment,
+		std::array<float,4>{0.f,0.f,0.f,0.f}
+	};
 
 	// pipeline 
-	vk::GraphicsPipelineCreateInfo pipelineInfo = {};
-	pipelineInfo.stageCount = 2;
-	pipelineInfo.pStages = shaderStages;
-	pipelineInfo.pVertexInputState = &vertexInputInfo;
-	pipelineInfo.pInputAssemblyState = &inputAssembly;
-	pipelineInfo.pViewportState = &viewportState;
-	pipelineInfo.pRasterizationState = &rasterizer;
-	pipelineInfo.pMultisampleState = &multisampling;
-	pipelineInfo.pColorBlendState = &colorBlending;
-	pipelineInfo.layout = pipelineLayout;
-	pipelineInfo.renderPass = renderPass;
-	pipelineInfo.subpass = 0;
-	pipelineInfo.basePipelineHandle = nullptr;
+	vk::GraphicsPipelineCreateInfo pipelineInfo = {
+		vk::PipelineCreateFlags(),
+		shaderStages,
+		&vertexInputInfo,
+		&inputAssembly,
+		nullptr,			// tessellation
+		&viewportState,
+		&rasterizer,
+		&multisampling,
+		nullptr,			// depth stencil
+		&colorBlending,
+		nullptr,			// dynamic state
+		pipelineLayout,
+		renderPass,
+		0,					// subpass
+		nullptr				// base pipeline
+	};
 
 	try {
 	    graphicsPipeline = device->createGraphicsPipeline(nullptr, pipelineInfo).value;
@@ -627,13 +654,14 @@ void Renderer::createFramebuffers() {
 			swapChainImageViews[i]
 		};
 		
-		vk::FramebufferCreateInfo framebufferInfo = {};
-		framebufferInfo.renderPass = renderPass;
-		framebufferInfo.attachmentCount = 1;
-		framebufferInfo.pAttachments = attachments;
-		framebufferInfo.width = swapChainExtent.width;
-		framebufferInfo.height = swapChainExtent.height;
-		framebufferInfo.layers = 1;
+		vk::FramebufferCreateInfo framebufferInfo = {
+			vk::FramebufferCreateFlags(),
+			renderPass,
+			attachments,
+			swapChainExtent.width,
+			swapChainExtent.height,
+			1
+		};
 		
 		try {
 			swapChainFramebuffers[i] = device->createFramebuffer(framebufferInfo);
@@ -647,7 +675,10 @@ void Renderer::createFramebuffers() {
 void Renderer::createCommandPool() {
 	QueueFamilyIndices queueFamilyIndices = findQueueFamilies(physicalDevice);
 	
-	vk::CommandPoolCreateInfo poolInfo = {};
+	vk::CommandPoolCreateInfo poolInfo = {
+		vk::CommandPoolCreateFlags(),
+		queueFamilyIndices.graphicsFamily.value(),
+	};
 	poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 	
 	try {
@@ -662,10 +693,11 @@ void Renderer::createCommandBuffers() {
 	// command count is same with swapchain framebuffers
 	commandBuffers.resize(swapChainFramebuffers.size());
 
-	vk::CommandBufferAllocateInfo allocInfo = {};
-	allocInfo.commandPool = commandPool;
-	allocInfo.level = vk::CommandBufferLevel::ePrimary; // submit to queue
-	allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
+	vk::CommandBufferAllocateInfo allocInfo = {
+		commandPool,
+		vk::CommandBufferLevel::ePrimary,
+		static_cast<uint32_t>(commandBuffers.size())
+	};
 
 	try {
 		commandBuffers = device->allocateCommandBuffers(allocInfo);
@@ -676,8 +708,9 @@ void Renderer::createCommandBuffers() {
 
 	// setup command
 	for (size_t i = 0; i < commandBuffers.size(); ++i) {
-		vk::CommandBufferBeginInfo beginInfo = {};
-		beginInfo.flags = vk::CommandBufferUsageFlagBits::eSimultaneousUse;
+		vk::CommandBufferBeginInfo beginInfo = {
+			vk::CommandBufferUsageFlagBits::eSimultaneousUse
+		};
 		
 		// start command
 		try {
@@ -687,15 +720,14 @@ void Renderer::createCommandBuffers() {
 			throw std::runtime_error("failed to begin recording command buffer!");
 		}
 		
-		vk::RenderPassBeginInfo renderPassInfo = {};
-		renderPassInfo.renderPass = renderPass;
-		renderPassInfo.framebuffer = swapChainFramebuffers[i];
-		renderPassInfo.renderArea.offset = vk::Offset2D{ 0,0 };
-		renderPassInfo.renderArea.extent = swapChainExtent;
-		
 		vk::ClearValue clearColor = { std::array<float, 4>{ 0.0f, 0.0f, 0.0f, 1.0f } };
-		renderPassInfo.clearValueCount = 1;
-		renderPassInfo.pClearValues = &clearColor;
+		vk::Rect2D renderArea{ vk::Offset2D(0,0), swapChainExtent };
+		vk::RenderPassBeginInfo renderPassInfo = {
+			renderPass,
+			swapChainFramebuffers[i],
+			renderArea,
+			clearColor
+		};
 		
 		// draw call, but not execute
 		// set dynamic state here if needed
@@ -763,20 +795,15 @@ void Renderer::render() {
 	device->resetFences(1, &inFlightFences[currentFrame]);
 	
 	// submit graphic queue
-	vk::SubmitInfo submitInfo = {};
-	
 	vk::Semaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
 	vk::PipelineStageFlags waitStages[] = { vk::PipelineStageFlagBits::eColorAttachmentOutput };
-	submitInfo.waitSemaphoreCount = 1;
-	submitInfo.pWaitSemaphores = waitSemaphores; 
-	submitInfo.pWaitDstStageMask = waitStages;
-	
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &commandBuffers[imageIndex]; // get command buffer
-	
 	vk::Semaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
-	submitInfo.signalSemaphoreCount = 1;
-	submitInfo.pSignalSemaphores = signalSemaphores;
+	vk::SubmitInfo submitInfo = {
+		waitSemaphores,
+		waitStages,
+		commandBuffers[imageIndex],
+		signalSemaphores
+	};
 	
 	try {
 		graphicsQueue.submit(submitInfo, inFlightFences[currentFrame]);
@@ -786,15 +813,13 @@ void Renderer::render() {
 	}
 	
 	// present result
-	vk::PresentInfoKHR presentInfo = {};
-	presentInfo.waitSemaphoreCount = 1;
-	presentInfo.pWaitSemaphores = signalSemaphores;
-	
 	vk::SwapchainKHR swapChains[] = { swapChain };
-	presentInfo.swapchainCount = 1;
-	presentInfo.pSwapchains = swapChains;
-	presentInfo.pImageIndices = &imageIndex;
-	presentInfo.pResults = nullptr; // Optional
+	vk::PresentInfoKHR presentInfo = {
+		signalSemaphores,
+		swapChains,
+		imageIndex,
+		nullptr
+	};
 	
 	vk::Result resultPresent;
 	try {

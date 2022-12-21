@@ -11,6 +11,8 @@
 
 #include <optional>
 
+//#define NDEBUG 1;
+
 struct QueueFamilyIndices {
 	std::optional<uint32_t> graphicsFamily;
 	std::optional<uint32_t> presentFamily;
