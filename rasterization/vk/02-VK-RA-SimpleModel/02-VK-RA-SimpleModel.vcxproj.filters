@@ -27,9 +27,6 @@
     <ClCompile Include="src\Window.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
@@ -39,9 +36,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Window.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Mesh.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Vertex.h">

@@ -2,16 +2,16 @@
 
 // refer to https://gpuopen.com/learn/understanding-vulkan-objects/
 
-#define VK_USE_PLATFORM_WIN32_KHR
+//#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include <GLFW/glfw3native.h>
+//#define GLFW_EXPOSE_NATIVE_WIN32
+//#include <GLFW/glfw3native.h>
 #include <vulkan/vulkan.hpp>
 
 #include <optional>
 
-#include "Mesh.h"
+#include "Vertex.h"
 
 //#define NDEBUG 1;
 
@@ -37,7 +37,7 @@ public:
 	Renderer(GLFWwindow* _window);
 	~Renderer();
 
-	void render(const std::vector<Mesh>& scene);
+	void render();
 	void waitIdle() const;
 
 	// set resize mark for the case of aquiring next image may not work
@@ -202,14 +202,11 @@ private:
 	// create buffer -> allocate memory -> bind buffer and memory -> copy data to buffer
 	// for transferring data, the best practice is: cpu data -> eTransferSrc -> eTransferDst, similar to bind buffer and glVertexAttribPointer in OpenGL
 	// the difference is the way of reading vertex data, in command buffer, not in vao settings
-	const std::vector<Vertex> vertices = {
-		{ {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-		{ {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-		{ {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
-	};
-	const std::vector<uint16_t> indices = {
-		0, 1, 2,
-	};
+	std::vector<Vertex> vertices;
+	std::vector<uint16_t> indices;
+
+	// set loadModel here for temp
+	void loadModel(const std::string& path);
 
 	vk::Buffer vertexBuffer;
 	vk::DeviceMemory vertexBufferMemory;

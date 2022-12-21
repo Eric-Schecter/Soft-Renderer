@@ -2,7 +2,6 @@
 
 #include "Window.h"
 #include "Renderer.h"
-#include "Mesh.h"
 
 class Application
 {
@@ -20,5 +19,4 @@ private:
 
 	Window* window;
 	Renderer* renderer;
-	std::vector<Mesh> scene;
 };

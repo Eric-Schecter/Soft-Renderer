@@ -33,9 +33,9 @@ Window::~Window() {
 	glfwTerminate();
 }
 
-void Window::render(Renderer* renderer, const std::vector<Mesh>& scene) {
+void Window::render(Renderer* renderer) {
 	while (!glfwWindowShouldClose(window)) {
-		renderer->render(scene);
+		renderer->render();
 		glfwPollEvents();
 	}
 

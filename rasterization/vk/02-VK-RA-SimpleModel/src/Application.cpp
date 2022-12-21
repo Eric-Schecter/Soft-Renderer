@@ -20,18 +20,11 @@ void Application::initRenderer() {
 }
 
 void Application::initScene() {
-	const std::vector<Vertex> vertices = {
-		{ {0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-		{ {0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-		{ {-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
-	 };
-	Mesh mesh;
-	mesh.vertices = vertices;
-	scene.push_back(mesh);
+
 }
 
 void Application::run() {
-	window->render(renderer,scene);
+	window->render(renderer);
 }
 
 void Application::release(void* pointer) {

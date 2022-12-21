@@ -6,6 +6,10 @@
 #include <limits>
 #include <fstream>
 #include <algorithm>
+#include <assimp/scene.h>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <glm/glm.hpp>
 
 Renderer::Renderer(GLFWwindow* _window):window(_window) {
 	createInstance();
@@ -19,8 +23,12 @@ Renderer::Renderer(GLFWwindow* _window):window(_window) {
 	createGraphicsPipeline();
 	createFramebuffers();
 	createCommandPools();
+
+	const std::string MODEL_PATH = "./models/african_head/african_head.obj";
+	loadModel(MODEL_PATH);
 	createVertexBuffer();
 	createIndexBuffer();
+
 	createCommandBuffers();
 	createSyncObjects();
 }
@@ -347,8 +355,8 @@ vk::Extent2D Renderer::chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabi
 		glfwGetFramebufferSize(window, &width, &height);
 		vk::Extent2D actualExtent = { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 
-		actualExtent.width = max(capabilities.minImageExtent.width, min(capabilities.maxImageExtent.width, actualExtent.width));
-		actualExtent.height = max(capabilities.minImageExtent.height, min(capabilities.maxImageExtent.height, actualExtent.height));
+		actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
+		actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
 
 		return actualExtent;
 	}
@@ -576,11 +584,12 @@ void Renderer::createGraphicsPipeline() {
 		VK_FALSE		// primitiveRestartEnable
 	};
 
+	// flip Y for vulkan coordinate is start from left top corner
 	vk::Viewport viewport = {
 		0,											// x
-		0,											// y
+		static_cast<float>(swapChainExtent.height),	// y
 		static_cast<float>(swapChainExtent.width),	// width
-		static_cast<float>(swapChainExtent.height),	// height
+		-static_cast<float>(swapChainExtent.height),// height
 		0,											// min depth
 		1											// max depth
 	};
@@ -602,7 +611,7 @@ void Renderer::createGraphicsPipeline() {
 		VK_FALSE,		// rasterizerDiscardEnable
 		vk::PolygonMode::eFill,
 		vk::CullModeFlagBits::eBack,
-		vk::FrontFace::eClockwise,
+		vk::FrontFace::eCounterClockwise,
 		VK_FALSE,		// depthBiasEnable
 		0.f,			// depthBiasConstantFactor
 		0.f,			// depthBiasClamp
@@ -789,9 +798,7 @@ void Renderer::createSyncObjects() {
 	}
 }
 
-void Renderer::render(const std::vector<Mesh>& scene) {
-	Mesh mesh = scene[0];
-
+void Renderer::render() {
 	// submit is async, cpu needs to wait for gpu's result
 	// every frame has two semaphore(wait singal and render singal) and one fence
 	// here are two fences, the next next render may be stucked if the gpu doesn't complete
@@ -1073,6 +1080,45 @@ void Renderer::createIndexBuffer() {
 	// release temo buffer
 	device->destroyBuffer(stagingBuffer);
 	device->freeMemory(stagingBufferMemory);
+}
+
+void Renderer::loadModel(const std::string& path) {
+	Assimp::Importer importer;
+	const aiScene* pScene = importer.ReadFile(path,
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType);
+
+	for (size_t i = 0; i < pScene->mNumMeshes; ++i) {
+		const aiMesh* paiMesh = pScene->mMeshes[i];
+
+		const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
+
+		for (size_t i = 0; i < paiMesh->mNumVertices; ++i) {
+			const aiVector3D* pPos = &(paiMesh->mVertices[i]);
+			const aiVector3D* pNormal = &(paiMesh->mNormals[i]);
+			const aiVector3D* pTexCoord = paiMesh->HasTextureCoords(0) ? &(paiMesh->mTextureCoords[0][i]) : &Zero3D;
+			const aiVector3D* pTangent = paiMesh->mTangents == nullptr ? &Zero3D : &(paiMesh->mTangents[i]);
+
+			auto pos = glm::vec3(pPos->x, pPos->y, pPos->z);
+			auto normal = glm::vec3(pNormal->x, pNormal->y, pNormal->z);
+			auto uv = glm::vec2(pTexCoord->x, 1.f - pTexCoord->y);
+			auto tangent = glm::vec3(pTangent->x, pTangent->y, pTangent->z);
+			auto biTangent = glm::cross(tangent, normal);
+
+			Vertex v{ pos, normal, uv, tangent, biTangent };
+			vertices.push_back(v);
+		}
+
+		for (size_t i = 0; i < paiMesh->mNumFaces; ++i) {
+			const aiFace& face = paiMesh->mFaces[i];
+			indices.push_back(face.mIndices[0]);
+			indices.push_back(face.mIndices[1]);
+			indices.push_back(face.mIndices[2]);
+		}
+
+	}
 }
 
 void Renderer::waitIdle() const {

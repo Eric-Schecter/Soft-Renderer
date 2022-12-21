@@ -6,8 +6,11 @@
 #include <array>
 
 struct Vertex {
-	glm::vec2 position;
-	glm::vec3 color;
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 uv;
+	glm::vec3 tangent;
+	glm::vec3 biTangent;
 
 	static vk::VertexInputBindingDescription getBindingDescription() {
 		vk::VertexInputBindingDescription bindingDescription = {
@@ -18,19 +21,37 @@ struct Vertex {
 		return bindingDescription;
 	}
 
-	static std::array<vk::VertexInputAttributeDescription, 2> getAttributeDescriptions() {
-		std::array<vk::VertexInputAttributeDescription, 2> attributeDescriptions{
+	static std::array<vk::VertexInputAttributeDescription, 5> getAttributeDescriptions() {
+		std::array<vk::VertexInputAttributeDescription, 5> attributeDescriptions{
 			vk::VertexInputAttributeDescription{
 				0,
 				0,
-				vk::Format::eR32G32Sfloat,
+				vk::Format::eR32G32B32Sfloat,
 				offsetof(Vertex,position)
 			},
 			vk::VertexInputAttributeDescription{
 				1,
 				0,
 				vk::Format::eR32G32B32Sfloat,
-				offsetof(Vertex,color)
+				offsetof(Vertex,normal)
+			},
+			vk::VertexInputAttributeDescription{
+				2,
+				0,
+				vk::Format::eR32G32Sfloat,
+				offsetof(Vertex,uv)
+			},
+			vk::VertexInputAttributeDescription{
+				3,
+				0,
+				vk::Format::eR32G32B32Sfloat,
+				offsetof(Vertex,tangent)
+			},
+			vk::VertexInputAttributeDescription{
+				4,
+				0,
+				vk::Format::eR32G32B32Sfloat,
+				offsetof(Vertex,biTangent)
 			},
 		};
 		return attributeDescriptions;
