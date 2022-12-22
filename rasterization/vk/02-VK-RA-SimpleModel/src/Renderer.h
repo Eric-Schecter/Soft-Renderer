@@ -1,12 +1,7 @@
 #pragma once
 
-// refer to https://gpuopen.com/learn/understanding-vulkan-objects/
-
-//#define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-//#define GLFW_EXPOSE_NATIVE_WIN32
-//#include <GLFW/glfw3native.h>
 #include <vulkan/vulkan.hpp>
 
 #include <optional>
@@ -155,7 +150,7 @@ private:
 	vk::PipelineLayout pipelineLayout;
 
 	// (4) create renderPass
-	// attachments to store render result
+	// arrange attachments for render pass
 	vk::RenderPass renderPass;
 	void createRenderPass();
 
@@ -212,9 +207,46 @@ private:
 	vk::DeviceMemory vertexBufferMemory;
 	vk::Buffer indexBuffer;
 	vk::DeviceMemory indexBufferMemory;
-	void createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory);
-	void copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::DeviceSize size);
+	void createBuffer(
+		vk::DeviceSize size, 
+		vk::BufferUsageFlags usage,
+		vk::MemoryPropertyFlags properties, 
+		vk::Buffer& buffer,
+		vk::DeviceMemory& bufferMemory
+	);
+	void copyBuffer(
+		vk::Buffer srcBuffer, 
+		vk::Buffer dstBuffer,
+		vk::DeviceSize size
+	);
 	uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
 	void createVertexBuffer();
 	void createIndexBuffer();
+
+	// 14. enable depth testing
+	// need to create image
+	vk::Image depthImage;
+	vk::DeviceMemory depthImageMemory;
+	vk::ImageView depthImageView;
+	vk::Format findSupportedFormat(
+		const std::vector<vk::Format>& candidates,
+		vk::ImageTiling tiling,
+		vk::FormatFeatureFlags features
+	);
+	vk::Format findDepthFormat();
+	void createImage(
+		uint32_t width,
+		uint32_t height, 
+		vk::Format format,
+		vk::ImageTiling tiling, 
+		vk::ImageUsageFlags usage,
+		vk::MemoryPropertyFlags properties,
+		vk::Image& image, 
+		vk::DeviceMemory& imageMemory
+	);
+	vk::ImageView createImageView(const vk::Image& image, const vk::Format& format, const vk::ImageAspectFlags& aspectFlags);
+	vk::CommandBuffer beginSingleTimeCommands();
+	void endSingleTimeCommands(vk::CommandBuffer commandBuffer);
+	void transitionImageLayout(vk::Image image, vk::Format format, vk::ImageLayout oldLayout, vk::ImageLayout newLayout);
+	void createDepthResources();
 };
