@@ -6,6 +6,9 @@
 
 #include <optional>
 #include <glm/mat4x4.hpp>
+#include <assimp/scene.h>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
 
 #include "Vertex.h"
 #include "Camera.h"
@@ -32,6 +35,16 @@ struct UniformBufferObject {
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 proj;
+	glm::mat4 norm;
+};
+
+struct Texture {
+	std::string name;
+	aiTextureType type;
+	vk::Image image;
+	vk::DeviceMemory imageMemory;
+	vk::ImageView imageView;
+	vk::Sampler sampler;
 };
 
 class Renderer
@@ -274,4 +287,12 @@ private:
 	std::vector<vk::DescriptorSet> descriptorSets;
 	void createDescriptorPool();
 	void createDescriptorSets();
+
+	// 16. create texture
+	std::vector<Texture> textures;
+	vk::Sampler createSampler();
+	vk::CommandBuffer beginSingleTimeCommands();
+	void endSingleTimeCommands(vk::CommandBuffer commandBuffer);
+	void transitionImageLayout(vk::Image image, vk::Format format, vk::ImageLayout oldLayout, vk::ImageLayout newLayout);
+	void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
 };
