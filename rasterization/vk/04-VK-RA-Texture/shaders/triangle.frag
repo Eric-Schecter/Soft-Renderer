@@ -13,12 +13,12 @@ layout(location = 0) out vec4 outColor;
 void main() {
     vec4 color = texture(diffuseMap,vUv);
     vec3 normal = texture(normalMap,vUv).xyz;
-    normal = normalize(normal * 2. - vec3(1.));
+    normal = normalize(normal * 2.f - vec3(1.f));
     normal = normalize(vTBN * normal);
-//
-//    vec4 ambientLight = vec4(.1f);
-//    vec3 lightDir = vec3(-1.f,-1.f,1.f);
-//    vec4 lightColor = vec4(1.f) * clamp(dot(normalize(lightDir),normal),0.f,1.f) + ambientLight;
 
-    outColor = vec4(normal,1.f);
+    vec4 ambientLight = vec4(.1f);
+    vec3 lightDir = vec3(-1.f,-1.f,1.f);
+    vec4 lightColor = vec4(1.f) * clamp(dot(normalize(lightDir),normal),0.f,1.f) + ambientLight;
+
+    outColor = color * lightColor;
 }

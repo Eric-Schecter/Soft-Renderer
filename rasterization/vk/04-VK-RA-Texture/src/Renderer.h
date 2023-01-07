@@ -289,6 +289,7 @@ private:
 	void createDescriptorSets();
 
 	// 16. create texture
+	// copy image data to staging buffer
 	std::vector<Texture> textures;
 	vk::Sampler createSampler();
 	vk::CommandBuffer beginSingleTimeCommands();

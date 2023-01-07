@@ -989,44 +989,27 @@ void Renderer::recreateSwapChain() {
 }
 
 void Renderer::copyBuffer(vk::Buffer srcBuffer, vk::Buffer dstBuffer, vk::DeviceSize size) {
-	// get command buffer from command pool
-	vk::CommandBufferAllocateInfo allocInfo = {
-		commandPoolTransfer,
-		vk::CommandBufferLevel::ePrimary,
-		1
-	};
-	
-	vk::CommandBuffer commandBuffer = device->allocateCommandBuffers(allocInfo)[0];
+	// create command buffer
+	vk::CommandBuffer commandBuffer = beginSingleTimeCommands();
 
-	// build command
-	vk::CommandBufferBeginInfo beginInfo = {
-		vk::CommandBufferUsageFlagBits::eOneTimeSubmit
-	};
-	
-	commandBuffer.begin(beginInfo);
-	
+	// define command
 	vk::BufferCopy copyRegion = {
 		0,
 		0,
 		size
 	};
-	commandBuffer.copyBuffer(srcBuffer, dstBuffer, copyRegion);
-	
-	commandBuffer.end();
-	
-	vk::SubmitInfo submitInfo = {
-		{},			// waitSemaphores,
-		{},			// waitStages,
-		commandBuffer,
-		{}			// signalSemaphores
-	};
 
-	transferQueue.submit(submitInfo, nullptr);
+	try
+	{
+		commandBuffer.copyBuffer(srcBuffer, dstBuffer, copyRegion);
+	}
+	catch (const std::exception&)
+	{
+		throw std::runtime_error("failed to copy buffer to image!");
+	}
 
-	// another option is fence, transfer multiple data at a time
-	transferQueue.waitIdle();
-
-	device->freeCommandBuffers(commandPoolTransfer, commandBuffer);
+	// submit command
+	endSingleTimeCommands(commandBuffer);
 }
 
 void Renderer::createBuffer(vk::DeviceSize size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory) {
@@ -1212,6 +1195,7 @@ void Renderer::loadModel(const std::string& path) {
 					unsigned char* image_data = imageLoader.image_data;
 					vk::DeviceSize bufferSize = width * height * 4;
 
+					// copy image data to staging buffer
 					vk::Buffer stagingBuffer;
 					vk::DeviceMemory stagingBufferMemory;
 
@@ -1226,10 +1210,11 @@ void Renderer::loadModel(const std::string& path) {
 					memcpy(bufferMapped, image_data, bufferSize);
 					device->unmapMemory(stagingBufferMemory);
 
+					// create image
 					createImage(
 						width,
 						height,
-						vk::Format::eR8G8B8A8Srgb,
+						vk::Format::eR8G8B8A8Unorm,
 						vk::ImageTiling::eOptimal,
 						vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled,
 						vk::MemoryPropertyFlagBits::eDeviceLocal,
@@ -1237,12 +1222,12 @@ void Renderer::loadModel(const std::string& path) {
 						textures[j].imageMemory
 					);
 
-					transitionImageLayout(textures[j].image, vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
-					copyBufferToImage(stagingBuffer, textures[j].image, width, height);
-					transitionImageLayout(textures[j].image, vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal);
-
-					textures[j].imageView = createImageView(textures[j].image, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
+					textures[j].imageView = createImageView(textures[j].image, vk::Format::eR8G8B8A8Unorm, vk::ImageAspectFlagBits::eColor);
 					textures[j].sampler = createSampler();
+
+					transitionImageLayout(textures[j].image, vk::Format::eR8G8B8A8Unorm, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal); // change image to transfer format
+					copyBufferToImage(stagingBuffer, textures[j].image, width, height); // transfer data from buffer to image
+					transitionImageLayout(textures[j].image, vk::Format::eR8G8B8A8Unorm, vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal); // change image to shader sampler read format
 
 					device->destroyBuffer(stagingBuffer);
 					device->freeMemory(stagingBufferMemory);
@@ -1488,11 +1473,13 @@ void Renderer::createDescriptorSets() {
 		vk::DescriptorImageInfo diffuseMapInfo = {
 			textures[0].sampler,
 			textures[0].imageView,
+			vk::ImageLayout::eShaderReadOnlyOptimal
 		};
 
 		vk::DescriptorImageInfo normalMapInfo = {
 			textures[1].sampler,
 			textures[1].imageView,
+			vk::ImageLayout::eShaderReadOnlyOptimal
 		};
 
 		std::array<vk::WriteDescriptorSet, 3> descriptorWrite{
@@ -1551,7 +1538,7 @@ vk::Sampler Renderer::createSampler() {
 		vk::CompareOp::eAlways,
 		0.f,
 		0.f,
-		vk::BorderColor::eFloatOpaqueBlack,
+		vk::BorderColor::eIntOpaqueBlack,
 		VK_FALSE
 	};
 
@@ -1596,8 +1583,8 @@ void Renderer::endSingleTimeCommands(vk::CommandBuffer commandBuffer) {
 		nullptr
 	};
 
-	graphicsQueue.submit(submitInfo);
-	graphicsQueue.waitIdle();
+	transferQueue.submit(submitInfo);
+	transferQueue.waitIdle();
 
 	device->freeCommandBuffers(commandPoolGraphics, commandBuffer);
 }
@@ -1665,8 +1652,10 @@ void Renderer::transitionImageLayout(vk::Image image, vk::Format format, vk::Ima
 }
 
 void Renderer::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height) {
+	// create command buffer
 	vk::CommandBuffer commandBuffer = beginSingleTimeCommands();
 	
+	// define command
 	vk::ImageSubresourceLayers imageSubresourceLayers = {
 		vk::ImageAspectFlagBits::eColor,
 		0,
@@ -1697,6 +1686,7 @@ void Renderer::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t wi
 		throw std::runtime_error("failed to copy buffer to image!");
 	}
 
+	// submit command
 	endSingleTimeCommands(commandBuffer);
 }
 
