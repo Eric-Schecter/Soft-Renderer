@@ -1,1 +1,1 @@
-![Triangle](./profiles/triangle.png)  
+![Cemera](./profiles/camera.png)  
