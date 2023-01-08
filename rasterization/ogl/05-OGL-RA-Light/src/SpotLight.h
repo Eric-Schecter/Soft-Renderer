@@ -7,8 +7,8 @@
 struct SpotLight {
 	glm::vec4 color;
 	glm::vec3 pos;
-	glm::vec3 direction;
-	GLfloat intensity;
 	GLfloat cutOff;
+	glm::vec3 direction;
 	GLfloat outerCutOff;
+	GLfloat intensity;
 };

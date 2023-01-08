@@ -48,10 +48,10 @@ void Application::initScene() {
 	SpotLight spotLight{
 		glm::vec4(1.f, 1.f, 1.f, 1.f),
 		glm::vec3(0.f, 10.f, 0.f),
-		glm::normalize(glm::vec3(0.f, -1.f, 0.f)),
-		.3f,
 		glm::cos(glm::radians(12.5f)),
-		glm::cos(glm::radians(17.5f))
+		glm::normalize(glm::vec3(0.f, -1.f, 0.f)),
+		glm::cos(glm::radians(17.5f)),
+		.3f
 	};
 	lights.spotLights.push_back(spotLight);
 
@@ -60,14 +60,14 @@ void Application::initScene() {
 		glm::vec3(-1.f),
 		1.f,
 		.5f,
+		.032f,
 		0.09f,
-		.032f
 	};
 	lights.pointLights.push_back(pointLight);
 
 	DirectionalLight directionalLight{
-		glm::normalize(glm::vec3(-1.f, 1.f, 1.f)),
 		glm::vec4(1.f, 1.f, 1.f, 1.f),
+		glm::normalize(glm::vec3(-1.f, 1.f, 1.f)),
 		.3f
 	};
 	lights.directionalLights.push_back(directionalLight);

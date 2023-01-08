@@ -1,14 +1,14 @@
 #version 460
 
 struct DirectionalLight {
-    vec3 direction;
     vec4 color;
+    vec3 direction;
     float intensity;
 };
 
 struct PointLight {
-    vec3 pos;
     vec4 color;
+    vec3 pos;
     float intensity;
     float constant;
     float linear;
@@ -16,11 +16,11 @@ struct PointLight {
 };
 
 struct SpotLight {
-    vec3 pos;
-    vec3 direction;
-    float cutOff;
-    float outerCutOff;
     vec4 color;
+    vec3 pos;
+    float cutOff;
+    vec3 direction;
+    float outerCutOff;
     float intensity;
 };
 

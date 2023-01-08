@@ -5,7 +5,7 @@
 #include <glm/vec4.hpp>
 
 struct DirectionalLight {
-	glm::vec3 direction;
 	glm::vec4 color;
+	glm::vec3 direction;
 	GLfloat intensity;
 };
