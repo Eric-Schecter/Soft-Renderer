@@ -36,25 +36,25 @@ export class LightDemo extends Application {
       .3
     ));
     this.lights['DirectionalLight'].push(new DirectionalLight(
-      vec3.normalize(vec3.create(),vec3.fromValues(-1, 1, 1)),
       vec4.fromValues(1, 1, 1, 1),
+      vec3.normalize(vec3.create(), vec3.fromValues(-1, 1, 1)),
       .3
     ));
     this.lights['PointLight'].push(new PointLight(
       vec4.fromValues(1, 1, 1, 1),
-      vec3.fromValues(-1,-1,-1),
+      vec3.fromValues(-1, -1, -1),
       1,
       .5,
+      .032,
       0.09,
-      .032
     ));
     this.lights['SpotLight'].push(new SpotLight(
       vec4.fromValues(1, 1, 1, 1),
       vec3.fromValues(0, 10, 0),
-      vec3.normalize(vec3.create(),vec3.fromValues(0, -1, 0)),
-      .3,
+      vec3.normalize(vec3.create(), vec3.fromValues(0, -1, 0)),
       Math.cos(12.5 / 180 * Math.PI),
-      Math.cos(17.5 / 180 * Math.PI)
+      Math.cos(17.5 / 180 * Math.PI),
+      .3,
     ));
 
     this.gl.enable(this.gl.DEPTH_TEST);
