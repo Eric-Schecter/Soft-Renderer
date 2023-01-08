@@ -66,6 +66,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03-VK-RA-Camera", "rasteriz
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04-VK-RA-Texture", "rasterization\vk\04-VK-RA-Texture\04-VK-RA-Texture.vcxproj", "{1002D64C-D86F-4B7D-BFDC-2F4BFE45F196}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "05-VK-RA-Light", "rasterization\vk\05-VK-RA-Light\05-VK-RA-Light.vcxproj", "{44C7D6CD-4562-4CFC-B76B-BD5C6D97FC5E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -298,6 +300,14 @@ Global
 		{1002D64C-D86F-4B7D-BFDC-2F4BFE45F196}.Release|x64.Build.0 = Release|x64
 		{1002D64C-D86F-4B7D-BFDC-2F4BFE45F196}.Release|x86.ActiveCfg = Release|Win32
 		{1002D64C-D86F-4B7D-BFDC-2F4BFE45F196}.Release|x86.Build.0 = Release|Win32
+		{44C7D6CD-4562-4CFC-B76B-BD5C6D97FC5E}.Debug|x64.ActiveCfg = Debug|x64
+		{44C7D6CD-4562-4CFC-B76B-BD5C6D97FC5E}.Debug|x64.Build.0 = Debug|x64
+		{44C7D6CD-4562-4CFC-B76B-BD5C6D97FC5E}.Debug|x86.ActiveCfg = Debug|Win32
+		{44C7D6CD-4562-4CFC-B76B-BD5C6D97FC5E}.Debug|x86.Build.0 = Debug|Win32
+		{44C7D6CD-4562-4CFC-B76B-BD5C6D97FC5E}.Release|x64.ActiveCfg = Release|x64
+		{44C7D6CD-4562-4CFC-B76B-BD5C6D97FC5E}.Release|x64.Build.0 = Release|x64
+		{44C7D6CD-4562-4CFC-B76B-BD5C6D97FC5E}.Release|x86.ActiveCfg = Release|Win32
+		{44C7D6CD-4562-4CFC-B76B-BD5C6D97FC5E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
